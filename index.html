@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>jsCHAT</title>
+  <meta charset="utf-8">
+  <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="style.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" type="image/png" href="logo.png" />
+<style>
+  body > div > a > img{
+    display: none !important;
+  }
+</style>
+</head>
+<body>
+  <div style="width: 100%;height: 100%;display: flex;align-items: center;position:fixed;justify-content: center;top: 0;left: 0;right: 0;bottom: 0;z-index: 9999;" id="loader">
+      <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-red">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-yellow">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+
+      <div class="spinner-layer spinner-green">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+    </div>
+    <p id="loadingStatus"> Proszę czekać...</p>
+  </div>
+
+  <div id="unlogged" style="display: none">
+  <h1 class="center"><img src="logo.png" style="width:75px;height: 75px;">Witaj na Jedynym Słusznym Czacie!</h1>
+  <p class="center">Aby korzystać z aplikacji, musisz być zalogowany.</p>
+  <ul class="collapsible">
+    <li class="active">
+      <div class="collapsible-header"><i class="material-icons">account_circle</i>Logowanie</div>
+      <div class="collapsible-body"><div class="row">
+      <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="login_email" type="email" class="validate">
+          <label for="email">Adres e-mail</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="login_password" type="password" class="validate">
+          <label for="password">Hasło</label>
+        </div>
+      </div>
+      <button class="btn right waves-effect" onclick="login()"><i class="material-icons">check</i> Zaloguj się</button>
+      
+    </div>
+  </div>
+  </div>
+    </li>
+    <li>
+      <div class="collapsible-header"><i class="material-icons">person_add</i>Rejestracja</div>
+      <div class="collapsible-body"><div class="row">
+    <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">perm_identity</i>
+          <input required id="nick" type="text" class="validate">
+          <label for="nick">Ustaw swój nick</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="email" type="email" class="validate">
+          <label for="email">Podaj swój adres e-mail</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="password" type="password" class="validate">
+          <label for="password">Ustaw swoje hasło</label>
+        </div>
+      </div>
+      <button class="btn right waves-effect" onclick="register()"><i class="material-icons">check</i> Zarejestruj się</button>
+      
+    </div>
+  </div></div>
+    </li>
+    <li>
+      <div class="collapsible-header"><i class="material-icons">security</i>Odzyskiwanie konta</div>
+      <div class="collapsible-body"><div class="row">
+      <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="recovery_email" type="email" class="validate">
+          <label for="email">Adres e-mail powiązany z kontem</label>
+        </div>
+      </div>
+      <button class="btn right waves-effect" onclick="password_reset()"><i class="material-icons">check</i> Resetuj hasło</button>
+    </div>
+  </div>
+  </div>
+    </li>
+  </ul>
+  </div>
+  <div id="logged" style="display: none;">
+    <ul id="dropdownAccount" class="dropdown-content">
+  <li><a onclick="settings()">Ustawienia</a></li>
+  <li><a onclick="logOut()">Wyloguj się</a></li>
+</ul>
+    <nav>
+    <div class="nav-wrapper teal">
+      <a class="brand-logo"><img src="logo.png" style="width:50px;height: 50px"> <span id="title"></span></a>
+      <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+      <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". miejsce" id="ranking1"></span></a></li>
+      <li id="editChannelTrigger1" style="display:none"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Edytuj tą konwersację</a></li>
+      <li><a class="dropdown-trigger" data-target="dropdownAccount">Moje konto<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav" id="mobile-nav">
+    <li><div class="user-view">
+      <div class="background" style="background-color:teal">
+        
+      </div>
+      <a><img class="circle" id="avatar"></a>
+      <a><span class="white-text name" id="nickname"></span></a>
+      <a><span class="white-text email" id="userEmail"></span></a>
+    </div></li>
+    <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". miejsce" id="ranking2"></span></a></li>
+    <li id="editChannelTrigger2" style="display:none"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Edytuj tą konwersację</a></li>
+    <li><div class="divider"></div></li>
+    <li><a onclick="settings()">Ustawienia</a></li>
+    <li><a onclick="logOut()">Wyloguj się</a></li>
+  </ul>
+  </ul>
+  <div id="channelSelector">
+    <div class="fixed-action-btn">
+  <a class="btn-floating btn-large red modal-trigger" href="#createChannel" id="openCreate" onclick="createChannelWindow()">
+    <i class="large material-icons">add</i>
+  </a>
+  <div class="tap-target red" data-target="openCreate">
+    <div class="tap-target-content">
+      <h5>Kliknij tutaj,</h5>
+      <p>aby rozpocząć nową konwersację z wybranymi użytkownikami.</p>
+    </div>
+  </div>
+</div>
+    <table class="centered highlight">
+        <thead>
+          <tr>
+              <th>ID</th>
+              <th>Nazwa</th>
+              <th>Twoje uprawnienia</th>
+          </tr>
+        </thead>
+
+        <tbody id="channelSelectorBody">
+          
+        </tbody>
+      </table>
+  </div>
+  <div id="channelWindow" style="display:none">
+    <div id="messages" style="width: 100%;height: 100%;overflow: auto">
+        <div class="progress"><div class="indeterminate"></div></div>
+    </div>
+    <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" onclick="actionSend(true);"><i class="large material-icons">add_comment</i></a></div>
+    <div class="tap-target blue" data-target="openSend">
+    <div class="tap-target-content">
+      <h5>Kliknij tutaj,</h5>
+      <p>aby napisać wiadomość.</p>
+    </div>
+  </div>
+    <div id="write" style="display:none">
+      <textarea id="textedit"></textarea>
+      <button class="btn waves-effect waves-light" onclick="sendMessage()" style="width:100%">Wyślij
+    <i class="material-icons right">send</i>
+  </button>
+    </div>
+  </div>
+  </div>
+
+  <!-- Modal Structure -->
+  <div id="createChannel" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Tworzenie konwersacji</h4>
+      <div class="row">
+        <div class="input-field col s12">
+
+          <i class="material-icons prefix">edit_mode</i>
+          <input required id="chan_name" type="text" class="validate">
+          <label for="chan_name">Nazwa</label>
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">star_rate</i>
+    <div class="chips chips-autocomplete placeholder"  id="adminsSelect"></div>
+    <span class="helper-text">Nie musisz dodawać siebie - jako twórca konwersacji automatycznie jesteś jej administratorem. Możesz jednak to zmienić, dodając siebie jako członka lub gościa.</span>
+  </div>
+  <div class="input-field col s12">
+          <i class="material-icons prefix">message</i>
+    <div class="chips chips-autocomplete placeholder" id="membersSelect"></div>
+    
+  </div>
+  <div class="input-field col s12">
+          <i class="material-icons prefix">remove_red_eyes</i>
+    <div class="chips chips-autocomplete placeholder" id="guestsSelect"></div>
+  </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="createChannel()">Utwórz konwersację</a>
+    </div>
+  </div>
+  <div id="editChannel" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Edytowanie konwersacji</h4>
+      <div class="row">
+        <div class="input-field col s12">
+
+          <i class="material-icons prefix">edit_mode</i>
+          <input required id="edit_chan_name" type="text" class="validate">
+          <label for="edit_chan_name">Nazwa</label>
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">star_rate</i>
+    <div class="chips chips-autocomplete placeholder"  id="adminsSelect"></div>
+    <span class="helper-text">Uwaga: usunięcie siebie będzie równoznaczne z opuszczeniem konwersacji.</span>
+  </div>
+  <div class="input-field col s12">
+          <i class="material-icons prefix">message</i>
+    <div class="chips chips-autocomplete placeholder" id="membersSelect"></div>
+    
+  </div>
+  <div class="input-field col s12">
+          <i class="material-icons prefix">remove_red_eyes</i>
+    <div class="chips chips-autocomplete placeholder" id="guestsSelect"></div>
+  </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="editChannel()">Zatwierdź zmiany</a>
+    </div>
+  </div>
+  <div id="userInfo" class="modal bottom-sheet">
+    <div class="modal-content">
+      <img id="userInfoAvatar" class="circle" style="width:64px; height:64px;"><span id="userInfoNick" style="font-size:64px"></span>
+      <p id="userInfoActivity"></p>
+      <p id="userInfoReputation"></p>
+      <p id="userInfoUid" style="color:gray;font-size: 8px;"></p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-teal btn-flat">Zamknij</a>
+    </div>
+  </div>
+  <div id="messageActions" class="modal bottom-sheet">
+    <div class="modal-content">
+      <button class="btn green waves-effect" id="upvote"><i class="material-icons">thumb_up</i></button>
+      <span id="votes"></span>
+      <button class="btn red waves-effect" id="downvote"><i class="material-icons">thumb_down</i></button>
+      <p id="yourVote"></p>
+      <button class="btn waves-effect btn-flat grey" id="voteBack">Cofnij moją reakcję</button>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-teal btn-flat">Anuluj</a>
+    </div>
+  </div>
+  <!-- Modal Structure -->
+  <div id="ranking" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Ranking Użytkowników</h4>
+      <table class="centered highlight">
+        <thead>
+          <tr>
+              <th>Miejsce</th>
+              <th>Nick</th>
+              <th>Reputacja</th>
+          </tr>
+        </thead>
+
+        <tbody id="rankingBody">
+          
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect btn-flat">Zamknij</a>
+    </div>
+  </div>
+</body>
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-database.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+<script src="https://cdn.tiny.cloud/1/6hqbfqbkupp38gqwmij0rn6amr3ozohz3wcsdi5wb8tfdrok/tinymce/5/tinymce.min.js"></script>
+<script src="main.js"></script>
+</html>
