@@ -10,7 +10,7 @@
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="icon" type="image/png" href="logo.png" />
+<link rel="icon" type="image/png" href="logo.png"/>
 <style>
   body > div > a > img{
     display: none !important;
@@ -64,7 +64,7 @@
   </div>
 
   <div id="unlogged" style="display: none">
-  <h1 class="center"><img src="logo.png" style="width:75px;height: 75px;">Witaj na Jedynym Słusznym Czacie!</h1>
+  <h1 class="center"><img src="logo.png" style="width:75px;height: 75px;" title="jsCHAT&#13;Jedyny słuszny komunikator">Witaj na Jedynym Słusznym Czacie!</h1>
   <p class="center">Aby korzystać z aplikacji, musisz być zalogowany.</p>
   <ul class="collapsible">
     <li class="active">
@@ -141,12 +141,12 @@
   </div>
   <div id="logged" style="display: none;">
     <ul id="dropdownAccount" class="dropdown-content">
-  <li><a onclick="settings()">Ustawienia</a></li>
+  <li><a onclick="settings()" class="modal-trigger" href="#settings">Ustawienia</a></li>
   <li><a onclick="logOut()">Wyloguj się</a></li>
 </ul>
     <nav>
     <div class="nav-wrapper teal">
-      <a class="brand-logo"><img src="logo.png" style="width:50px;height: 50px"> <span id="title"></span></a>
+      <a class="brand-logo"><img src="logo.png" style="width:50px;height: 50px" title="jsCHAT&#13;Jedyny słuszny komunikator"> <span id="title"></span></a>
       <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
       <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". miejsce" id="ranking1"></span></a></li>
@@ -168,7 +168,7 @@
     <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". miejsce" id="ranking2"></span></a></li>
     <li id="editChannelTrigger2" style="display:none"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Edytuj tą konwersację</a></li>
     <li><div class="divider"></div></li>
-    <li><a onclick="settings()">Ustawienia</a></li>
+    <li><a onclick="settings()" class="modal-trigger" href="#settings">Ustawienia</a></li>
     <li><a onclick="logOut()">Wyloguj się</a></li>
   </ul>
   </ul>
@@ -179,15 +179,14 @@
   </a>
   <div class="tap-target red" data-target="openCreate">
     <div class="tap-target-content">
-      <h5>Kliknij tutaj,</h5>
-      <p>aby rozpocząć nową konwersację z wybranymi użytkownikami.</p>
+      <h5>Chcesz utworzyć nową konwersację?</h5>
+      <p>Kliknij tutaj!</p>
     </div>
   </div>
 </div>
     <table class="centered highlight">
         <thead>
           <tr>
-              <th>ID</th>
               <th>Nazwa</th>
               <th>Twoje uprawnienia</th>
           </tr>
@@ -205,7 +204,7 @@
     <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" onclick="actionSend(true);"><i class="large material-icons">add_comment</i></a></div>
     <div class="tap-target blue" data-target="openSend">
     <div class="tap-target-content">
-      <h5>Kliknij tutaj,</h5>
+      <h5>Naciśnij ten przycisk,</h5>
       <p>aby napisać wiadomość.</p>
     </div>
   </div>
@@ -263,7 +262,7 @@
         <div class="input-field col s12">
           <i class="material-icons prefix">star_rate</i>
     <div class="chips chips-autocomplete placeholder"  id="adminsSelect"></div>
-    <span class="helper-text">Uwaga: usunięcie siebie będzie równoznaczne z opuszczeniem konwersacji.</span>
+    <span class="helper-text">Uwaga: usunięcie siebie spowoduje utratę lub zmniejszenie uprawnień do tej konwersacji.</span>
   </div>
   <div class="input-field col s12">
           <i class="material-icons prefix">message</i>
@@ -286,6 +285,9 @@
       <img id="userInfoAvatar" class="circle" style="width:64px; height:64px;"><span id="userInfoNick" style="font-size:64px"></span>
       <p id="userInfoActivity"></p>
       <p id="userInfoReputation"></p>
+      <p id="userInfoSent"></p>
+      <p id="userInfoSelfDeleted"></p>
+      <p id="userInfoAdminDeleted"></p>
       <p id="userInfoUid" style="color:gray;font-size: 8px;"></p>
     </div>
     <div class="modal-footer">
@@ -296,9 +298,11 @@
     <div class="modal-content">
       <button class="btn green waves-effect" id="upvote"><i class="material-icons">thumb_up</i></button>
       <span id="votes"></span>
-      <button class="btn red waves-effect" id="downvote"><i class="material-icons">thumb_down</i></button>
+      <button class="btn orange waves-effect" id="downvote"><i class="material-icons">thumb_down</i></button>
       <p id="yourVote"></p>
-      <button class="btn waves-effect btn-flat grey" id="voteBack">Cofnij moją reakcję</button>
+      <button class="btn waves-effect btn-flat grey" id="voteBack"><i class="material-icons">undo</i> Cofnij moją reakcję</button>
+      <br/><br/>
+      <button class="btn waves-effect btn-flat red" id="deleteMessage"><i class="material-icons">delete</i> Usuń dla wszystkich</button>
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-teal btn-flat">Anuluj</a>
@@ -324,6 +328,19 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect btn-flat">Zamknij</a>
+    </div>
+  </div>
+  <div id="settings" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Ustawienia</h4>
+    </div>
+    <p id="settingsNick"></p>
+    <p id="settingsAvatar"></p>
+    <p id="settingsEmail"></p>
+    <p id="settingsPassword"></p>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-green btn-flat">Zapisz</a>
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
     </div>
   </div>
 </body>

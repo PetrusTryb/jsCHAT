@@ -227,6 +227,7 @@ function editChannel(){
     })
   }
   function openChannelSelector(){
+    setTitle("Konwersacje");
     adminOptions(false);
     document.getElementById("channelWindow").style.display="none";
     document.getElementById("channelSelector").style.display="block";
@@ -255,7 +256,7 @@ function editChannel(){
               break;
           }
           //console.log(permText);
-          table.innerHTML+="<tr onclick='joinChannel("+key+")'><td>"+key+"</td><td>"+childName+"</td><td>"+permText+"</td></tr>";
+          table.innerHTML+="<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+permText+"</td></tr>";
           
         }
       })
@@ -277,6 +278,7 @@ function editChannel(){
         firebase.database().ref("channels/"+channelId+"/messages_count/").set(mId).then(function(){
           M.toast({html:"Wiadomość została wysłana."});
           tinyMCE.activeEditor.setContent('');
+          countMessage(firebase.auth().currentUser.uid,"SENT");
         })
       })
     })
@@ -285,14 +287,34 @@ function editChannel(){
     M.toast({html:"Nie wolno wysyłać pustych wiadomości."});
   }
   }
+  function countMessage(uid,type){
+    firebase.database().ref("users/"+uid).once("value").then(function(snapshot){
+      switch(type){
+      case "SENT":
+      var sent = snapshot.val().sent_count;
+      if(sent==undefined)
+        sent = 1;
+      else
+        sent++;
+      firebase.database().ref("users/"+uid).update({
+        sent_count:sent
+      })
+        break;
+    }
+    })
+    
+  }
+  var isAdmin = false;
   function adminOptions(show){
     if(show){
       document.getElementById("editChannelTrigger1").style.display="block";
       document.getElementById("editChannelTrigger2").style.display="block";
+      isAdmin=true;
     }
     else{
       document.getElementById("editChannelTrigger1").style.display="none";
       document.getElementById("editChannelTrigger2").style.display="none";
+      isAdmin=false;
     }
   }
   function discoverySend(){
@@ -372,7 +394,7 @@ function editChannel(){
         var min = Math.floor(sec/60)//+" minut temu.";
         var hour = Math.floor(min/60)//+" godzin temu.";
         if(sec<60)
-          output+=sec+" sekund(y) temu";
+          output+="przed chwilą";
         else if(min<60)
           output+=min+" minut(y) temu";
         else if(hour<24)
@@ -422,11 +444,21 @@ function editChannel(){
     var avatarField = document.getElementById("userInfoAvatar");
     var uidField = document.getElementById("userInfoUid");
     var reputationField = document.getElementById("userInfoReputation");
+    var sentCountField = document.getElementById("userInfoSent");
+    var deletedSelfCountField = document.getElementById("userInfoSelfDeleted");
+    var deletedByAdminCountField = document.getElementById("userInfoAdminDeleted");
+
     firebase.database().ref("users/"+uid).once("value").then(function(snapshot){
       nickField.innerHTML=snapshot.val().actualNick;
       avatarField.src=snapshot.val().actualImage;
       reputationField.innerHTML="Reputacja: "+snapshot.val().points;
       uidField.innerHTML=uid;
+      if(snapshot.val().sent_count)
+        sentCountField.innerHTML="Wysłanych wiadomości: "+snapshot.val().sent_count;
+      if(snapshot.val().selfDeleted_count)
+        deletedSelfCountField.innerHTML="Usuniętych samodzielnie: "+snapshot.val().selfDeleted_count;
+      if(snapshot.val().adminDeleted_count)
+        deletedByAdminCountField.innerHTML="Usuniętych przez administratorów: "+snapshot.val().adminDeleted_count;
       if(snapshot.val().connections){
         activityField.innerHTML="<span style='color:green'>Aktywny teraz</span>";
       }
@@ -440,7 +472,7 @@ function editChannel(){
   }
   function getAuthorData(msgId,message){
     firebase.database().ref("users/"+message.author).once("value").then(function(snapshot){
-          document.getElementById("info"+msgId).innerHTML="<img class='circle' style='width:24px; height:24px' src='"+snapshot.val().actualImage+"'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time);
+          document.getElementById("info"+msgId).innerHTML="<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time);
           scrollToBottom();
         })
   }
@@ -463,6 +495,50 @@ function editChannel(){
         M.toast({html:"Twój głos został usunięty."});
       });
   }
+  var previousMessage;
+  function undo(id,penalty){
+    M.Toast.dismissAll();
+    firebase.database().ref("channels/"+channelId+"/messages/"+id).update(previousMessage);
+    if(!penalty){
+      firebase.database().ref("users/"+previousMessage.author+"/selfDeleted_count").once("value").then(function(snapshot){
+        firebase.database().ref("users/"+previousMessage.author+"/selfDeleted_count").set(snapshot.val()-1);
+      })
+    }
+    else{
+      firebase.database().ref("users/"+previousMessage.author+"/adminDeleted_count").once("value").then(function(snapshot){
+        firebase.database().ref("users/"+previousMessage.author+"/adminDeleted_count").set(snapshot.val()-1);
+      })
+    }
+  }
+  function removeMessage(id){
+    M.Toast.dismissAll();
+    firebase.database().ref("channels/"+channelId+"/messages/"+id).once("value").then(function(snapshot){
+      previousMessage = snapshot.val();
+      
+        firebase.database().ref("channels/"+channelId+"/messages/"+id).remove().then(function(){
+          
+          if(previousMessage.author==firebase.auth().currentUser.uid)
+          firebase.database().ref("users/"+previousMessage.author+"/selfDeleted_count").once("value").then(function(snapshot){
+            if(snapshot.val())
+              firebase.database().ref("users/"+previousMessage.author+"/selfDeleted_count").set(snapshot.val()+1);
+            else
+              firebase.database().ref("users/"+previousMessage.author+"/selfDeleted_count").set(1);
+            M.toast({html:"Usunięto wiadomość. <button class='btn-flat toast-action' onclick='undo("+id+",false)'>Cofnij</button>"});
+          })
+          else if(isAdmin)
+          firebase.database().ref("users/"+previousMessage.author+"/adminDeleted_count").once("value").then(function(snapshot){
+            if(snapshot.val())
+              firebase.database().ref("users/"+previousMessage.author+"/adminDeleted_count").set(snapshot.val()+1);
+            else
+              firebase.database().ref("users/"+previousMessage.author+"/adminDeleted_count").set(1);
+            M.toast({html:"Usunięto wiadomość. <button class='btn-flat toast-action' onclick='undo("+id+",true)'>Cofnij</button>"});
+          })
+        })
+      
+
+      
+    })
+  }
   function contextMenu(id,owner){
     var instance = M.Modal.getInstance(document.getElementById("messageActions"));
     var votesCount = document.getElementById("votes");
@@ -470,6 +546,7 @@ function editChannel(){
     var downvoteButton = document.getElementById("downvote");
     var myVoteStatus = document.getElementById("yourVote");
     var undoVoteButton = document.getElementById("voteBack");
+    var removeButton = document.getElementById("deleteMessage");
     
     upvoteButton.onclick=function(){sendVote(1,id,owner)};
     downvoteButton.onclick=function(){sendVote(-1,id,owner)};
@@ -481,7 +558,7 @@ function editChannel(){
       if(owner==firebase.auth().currentUser.uid){
           upvoteButton.disabled=true;
           downvoteButton.disabled=true;
-          myVoteStatus.innerHTML="Nie możesz reagować na własne wiadomości";
+          myVoteStatus.innerHTML="Nie możesz reagować na własne wiadomości.";
         }
       if(snapshot.val()){
         var votes = 0;
@@ -510,7 +587,13 @@ function editChannel(){
       }
       instance.open();
     })
-    
+    removeButton.onclick=function(){removeMessage(id);};
+    if(isAdmin||owner==firebase.auth().currentUser.uid){
+      removeButton.style.display="block";
+    }
+    else{
+      removeButton.style.display="none";
+    }
     event.preventDefault();
   }
   function autoUpdate(snapshot){
@@ -525,7 +608,7 @@ function editChannel(){
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.innerHTML+="<div class='my' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><img class='circle' style='width:24px; height:24px' src='"+firebase.auth().currentUser.photoURL+"'>Ty &diams; "+timeAgo(message.time)+"</p></div>";
+        messagesDiv.innerHTML+="<div class='my' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+firebase.auth().currentUser.photoURL+"'>Ty</a> &diams; "+timeAgo(message.time)+"</p></div>";
       }
       else{
         messagesDiv.innerHTML+="<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>";
@@ -546,11 +629,14 @@ function editChannel(){
  		setTitle("Konwersacje");
  		messagesRef.off();
     metaRef.off();
+    clearInterval(refreshInterval);
  		openChannelSelector();
  		break;
  }
 }
   var channelId;
+  var refreshInterval;
+  var lastSnapshot;
   function joinChannel(id){
   	document.getElementById("messages").innerHTML='<div class="progress"><div class="indeterminate"></div></div>';
     document.getElementById("channelWindow").style.display="block";
@@ -566,8 +652,10 @@ function editChannel(){
        //autoUpdate(snapshot.val().messages);
 });
     messagesRef.on('value', function(snapshot) {
+      lastSnapshot = snapshot;
        autoUpdate(snapshot);
 });
+    refreshInterval = setInterval(autoUpdate(lastSnapshot),60000);
   }
   function setTitle(title){
     document.title=title;
@@ -603,12 +691,12 @@ function editChannel(){
     document.getElementById("avatar").src=user.photoURL;
     document.getElementById("nickname").innerHTML=user.displayName;
     document.getElementById("userEmail").innerHTML=user.email;
-    setTitle("Konwersacje");
+    
     document.getElementById("unlogged").style.display="none";
     document.getElementById("logged").style.display="block";
     document.getElementById("loader").style.display="none";
   }
-  openChannelSelector();
+  
   M.AutoInit();
   ranking();
 }
@@ -646,7 +734,7 @@ connectedRef.on('value', function(snap) {
     userdbRef.on('value', function(snapshot) {
   getAccountConfig(user,snapshot);
 });
-    
+    openChannelSelector();
   } else {
     // User is signed out.
     console.info("Użytkownik nie jest zalogowany.");
