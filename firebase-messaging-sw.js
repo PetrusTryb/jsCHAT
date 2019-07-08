@@ -14,9 +14,9 @@ const messaging = firebase.messaging();
 messaging.setBackgroundMessageHandler(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   // Customize notification here
-  var notificationTitle = 'Background Message Title';
+  var notificationTitle = 'jsCHAT';
   var notificationOptions = {
-    body: 'Background Message body.',
+    body: 'Twoje konto wymaga uwagi!',
     icon: 'logo_small.png'
   };
 
