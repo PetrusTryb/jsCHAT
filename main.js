@@ -795,7 +795,21 @@ function editChannel(){
 function sendTokenToServer(token){
   firebase.database().ref("tokens/"+firebase.auth().currentUser.uid).set(token);
 }
-
+const messaging = firebase.messaging();
+messaging.onTokenRefresh(() => {
+  messaging.getToken().then((refreshedToken) => {
+    console.log('Token refreshed.');
+    // Indicate that the new Instance ID token has not yet been sent to the
+    // app server.
+    //setTokenSentToServer(false);
+    // Send Instance ID token to app server.
+    sendTokenToServer(refreshedToken);
+    // ...
+  }).catch((err) => {
+    console.log('Unable to retrieve refreshed token ', err);
+    showToken('Unable to retrieve refreshed token ', err);
+  });
+});
 
   firebase.auth().onAuthStateChanged(function(user) {
       // since I can connect from multiple devices or browser tabs, we store each connection instance separately
@@ -803,7 +817,6 @@ function sendTokenToServer(token){
 // any time that connectionsRef's value is null (i.e. has no children) I am offline
   if (user) {
     firebase.database().goOnline();
-    const messaging = firebase.messaging();
     messaging.usePublicVapidKey("BPDAW6zbeuUv-DLHgb8te4i3WuWATdLYxok79bIZvUL9M08gDTV4HFh_Xp-2AMs5N55xRmzNtL4n3-4mp1zhizY");
     Notification.requestPermission().then((permission) => {
   if (permission === 'granted') {
@@ -825,6 +838,7 @@ function sendTokenToServer(token){
 
   } else {
     console.error('Unable to get permission to notify.');
+    M.toast({html:"Powiadomienia są zablokowane. Nie będziesz otrzymywał informacji o nowych wiadomościach."});
   }
 });
 
