@@ -795,9 +795,7 @@ function editChannel(){
 function sendTokenToServer(token){
   firebase.database().ref("tokens/"+firebase.auth().currentUser.uid).set(token);
 }
-function updateUIForPushPermissionRequired(){
-  console.info("Proszę zezwolić na pokazywanie powiadomień");
-}
+
 
   firebase.auth().onAuthStateChanged(function(user) {
       // since I can connect from multiple devices or browser tabs, we store each connection instance separately
@@ -812,14 +810,12 @@ function updateUIForPushPermissionRequired(){
     console.log('Notification permission granted.');
     messaging.getToken().then((currentToken) => {
   if (currentToken) {
+    console.log(currentToken);
     sendTokenToServer(currentToken);
     //updateUIForPushEnabled(currentToken);
   } else {
     // Show permission request.
     console.log('No Instance ID token available. Request permission to generate one.');
-    // Show permission UI.
-    updateUIForPushPermissionRequired();
-    //setTokenSentToServer(false);
   }
 }).catch((err) => {
   console.error('An error occurred while retrieving token. ', err);
