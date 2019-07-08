@@ -811,7 +811,7 @@ messaging.onTokenRefresh(() => {
   });
 });
 messaging.onMessage((payload) => {
-  console.log('Message received. ', payload);
+  console.log('Message received. '+ payload);
   // ...
 });
   firebase.auth().onAuthStateChanged(function(user) {
