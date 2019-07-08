@@ -1,0 +1,14 @@
+{
+  "name": "jsCHAT - Jedyny Słuszny Komunikator",
+  "short_name": "jsCHAT",
+  "start_url": "/",
+  "gcm_sender_id": "103953800507",
+  "icons": [
+  {
+    "src": "logo.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  },
+],
+  "display": "standalone"
+}

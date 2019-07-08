@@ -747,10 +747,10 @@ function editChannel(){
   }
   function resetAvatar(){
     firebase.auth().currentUser.updateProfile({
-      photoURL:"https://piotr-trybisz.000webhostapp.com/msg/logo.png"
+      photoURL:"logo_small.png"
     }).then(function(){
       firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
-        actualImage:"https://piotr-trybisz.000webhostapp.com/msg/logo.png"
+        actualImage:"logo_small.png"
       }).then(function(){
         M.toast({html:"Twój dotychczasowy awatar został zastąpiony domyślnym."});
       })
@@ -762,13 +762,13 @@ function editChannel(){
       
       user.updateProfile({
   displayName: document.getElementById("nick").value,
-  photoURL:"https://piotr-trybisz.000webhostapp.com/msg/logo.png"
+  photoURL:"logo_small.png"
 }).then(function() {
 
   firebase.database().ref("users/"+user.uid).set({
     "points":0,
     "actualNick":document.getElementById("nick").value,
-    "actualImage":"https://piotr-trybisz.000webhostapp.com/msg/logo.png"
+    "actualImage":"logo_small.png"
   }).then(function(){
     location.reload();
   })
@@ -792,11 +792,46 @@ function editChannel(){
   M.AutoInit();
   ranking();
 }
+function sendTokenToServer(token){
+  firebase.database().ref("tokens/"+firebase.auth().currentUser.uid).set(token);
+}
+function updateUIForPushPermissionRequired(){
+  console.info("Proszę zezwolić na pokazywanie powiadomień");
+}
+
   firebase.auth().onAuthStateChanged(function(user) {
       // since I can connect from multiple devices or browser tabs, we store each connection instance separately
+
 // any time that connectionsRef's value is null (i.e. has no children) I am offline
   if (user) {
     firebase.database().goOnline();
+    const messaging = firebase.messaging();
+    messaging.usePublicVapidKey("BPDAW6zbeuUv-DLHgb8te4i3WuWATdLYxok79bIZvUL9M08gDTV4HFh_Xp-2AMs5N55xRmzNtL4n3-4mp1zhizY");
+    Notification.requestPermission().then((permission) => {
+  if (permission === 'granted') {
+    console.log('Notification permission granted.');
+    messaging.getToken().then((currentToken) => {
+  if (currentToken) {
+    sendTokenToServer(currentToken);
+    //updateUIForPushEnabled(currentToken);
+  } else {
+    // Show permission request.
+    console.log('No Instance ID token available. Request permission to generate one.');
+    // Show permission UI.
+    updateUIForPushPermissionRequired();
+    //setTokenSentToServer(false);
+  }
+}).catch((err) => {
+  console.error('An error occurred while retrieving token. ', err);
+  //showToken('Error retrieving Instance ID token. ', err);
+  //setTokenSentToServer(false);
+});
+
+  } else {
+    console.error('Unable to get permission to notify.');
+  }
+});
+
     M.toast({html:"Witaj, "+user.displayName});
     var myConnectionsRef = firebase.database().ref('users/'+user.uid+'/connections');
 
