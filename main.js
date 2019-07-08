@@ -810,7 +810,10 @@ messaging.onTokenRefresh(() => {
     showToken('Unable to retrieve refreshed token ', err);
   });
 });
-
+messaging.onMessage((payload) => {
+  console.log('Message received. ', payload);
+  // ...
+});
   firebase.auth().onAuthStateChanged(function(user) {
       // since I can connect from multiple devices or browser tabs, we store each connection instance separately
 
