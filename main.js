@@ -16,7 +16,7 @@ var debugMode = true;
     authDomain: "jschat-official.firebaseapp.com",
     databaseURL: "https://jschat-official.firebaseio.com",
     projectId: "jschat-official",
-    storageBucket: "",
+    storageBucket: "jschat-official.appspot.com",
     messagingSenderId: "684850370153",
     appId: "1:684850370153:web:4086f7f88148148d"
   };
@@ -662,7 +662,99 @@ function editChannel(){
     document.getElementById("title").innerHTML=title;
   }
   function settings(){
-
+      document.getElementById("settingsNick").innerHTML=firebase.auth().currentUser.displayName;
+      document.getElementById("settingsAvatar").src=firebase.auth().currentUser.photoURL;
+      document.getElementById("settingsEmail").innerHTML=firebase.auth().currentUser.email;
+  }
+  function getMyInfo(){
+    getUserInfo(firebase.auth().currentUser.uid);
+  }
+  function changeNick(){
+    var newNick = document.getElementById("edit_nick").value;
+    if(newNick.length>0){
+      firebase.auth().currentUser.updateProfile({
+        displayName:newNick
+      }).then(function(){
+        firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
+          actualNick:newNick
+        }).then(function(){
+          M.toast({html:"Gotowe!"});
+        })
+      })
+    }
+  }
+  function changeEmail(){
+    var newEmail = document.getElementById("edit_email").value;
+    var password = document.getElementById("edit_email_password").value;
+    var credential = firebase.auth.EmailAuthProvider.credential(firebase.auth().currentUser.email, password);
+    if(newEmail.length>0){
+      firebase.auth().currentUser.reauthenticateWithCredential(credential).then(function() {
+  // User re-authenticated.
+  firebase.auth().currentUser.updateEmail(newEmail).then(function() {
+  // Update successful.
+  M.toast({html:"Gotowe. Sprawdź skrzynkę odbiorczą."})
+}).catch(function(error) {
+  M.toast({html:error.message});
+});
+}).catch(function(error) {
+  M.toast({html:error.message})
+});
+      
+    }
+  }
+  function changeAvatar(){
+    var AvatarRef = firebase.storage().ref(firebase.auth().currentUser.uid+"/avatar"+Math.floor(Math.random()*10));
+    var file = document.getElementById("upload_avatar").files[0];
+    var uploadTask = AvatarRef.put(file);
+    var progressBar = document.getElementById("upload_avatar_progress");
+    var progressText = document.getElementById("upload_avatar_state");
+    progressBar.style.width="0%";
+    uploadTask.on('state_changed', function(snapshot){
+  // Observe state change events such as progress, pause, and resume
+  // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  console.log('Upload is ' + progress + '% done');
+  progressBar.style.width=progress+"%";
+  switch (snapshot.state) {
+    case firebase.storage.TaskState.PAUSED: // or 'paused'
+      console.log('Upload is paused');
+      progressText.innerHTML="Przesyłanie wstrzymane. Sprawdź połączenie.";
+      break;
+    case firebase.storage.TaskState.RUNNING: // or 'running'
+      console.log('Upload is running');
+      progressText.innerHTML="Przesyłanie zdjęcia...";
+      break;
+  }
+}, function(error) {
+  // Handle unsuccessful uploads
+  M.toast({html:"Przesyłanie nie powiodło się."});
+}, function() {
+  // Handle successful uploads on complete
+  // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+  uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+    console.log('File available at: '+ downloadURL);
+    firebase.auth().currentUser.updateProfile({
+      photoURL:downloadURL
+    }).then(function(){
+      firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
+        actualImage:downloadURL
+      }).then(function(){
+        M.toast({html:"Twój awatar został przesłany."});
+      })
+    })
+  });
+});
+  }
+  function resetAvatar(){
+    firebase.auth().currentUser.updateProfile({
+      photoURL:"https://piotr-trybisz.000webhostapp.com/msg/logo.png"
+    }).then(function(){
+      firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
+        actualImage:"https://piotr-trybisz.000webhostapp.com/msg/logo.png"
+      }).then(function(){
+        M.toast({html:"Twój dotychczasowy awatar został zastąpiony domyślnym."});
+      })
+    })
   }
   var userdbRef;
   function getAccountConfig(user){
@@ -690,13 +782,13 @@ function editChannel(){
 
     document.getElementById("avatar").src=user.photoURL;
     document.getElementById("nickname").innerHTML=user.displayName;
+    document.getElementById("edit_nick").value=user.displayName;
     document.getElementById("userEmail").innerHTML=user.email;
-    
+    M.updateTextFields();
     document.getElementById("unlogged").style.display="none";
     document.getElementById("logged").style.display="block";
     document.getElementById("loader").style.display="none";
   }
-  
   M.AutoInit();
   ranking();
 }

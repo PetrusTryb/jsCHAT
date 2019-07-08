@@ -308,7 +308,6 @@
       <a class="modal-close waves-effect waves-teal btn-flat">Anuluj</a>
     </div>
   </div>
-  <!-- Modal Structure -->
   <div id="ranking" class="modal modal-fixed-footer">
     <div class="modal-content">
       <h4>Ranking Użytkowników</h4>
@@ -333,14 +332,100 @@
   <div id="settings" class="modal modal-fixed-footer">
     <div class="modal-content">
       <h4>Ustawienia</h4>
+    <p>Nick: <span id="settingsNick"></span><a class="btn-flat blue-text modal-trigger" href="#editNick"><i class="material-icons left">edit</i></a></p>
+    <p>Awatar: <br/><img id="settingsAvatar" class="circle" style="width:64px; height:64px" /><a class="btn-flat blue-text modal-trigger" href="#uploadAvatar"><i class="material-icons left">cloud_upload</i></a><a class="btn-flat red-text modal-trigger" href="#resetAvatar"><i class="material-icons left">clear</i></a></p>
+    <p>Adres e-mail: <span id="settingsEmail"></span><a class="btn-flat blue-text modal-trigger" href="#editEmail"><i class="material-icons left">edit</i></a></p>
+    <a class="btn blue modal-trigger" href="#changePassword"><i class="material-icons left">lock</i> Zmień hasło</a><a class="btn red"><i class="material-icons left">delete</i> Usuń konto</a>
     </div>
-    <p id="settingsNick"></p>
-    <p id="settingsAvatar"></p>
-    <p id="settingsEmail"></p>
-    <p id="settingsPassword"></p>
+    
     <div class="modal-footer">
-      <a class="modal-close waves-effect waves-green btn-flat">Zapisz</a>
+      <a class="waves-effect waves-teal btn-flat modal-trigger" href="#userInfo" onclick="getMyInfo()">Podgląd profilu</a>
+      <a class="modal-close waves-effect waves-grey btn-flat">Zamknij</a>
+    </div>
+  </div>
+  <div id="editNick" class="modal bottom-sheet">
+    <div class="modal-content">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">perm_identity</i>
+          <input required id="edit_nick" type="text" class="validate">
+          <label for="edit_nick">Nowy nick</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changeNick()">Zapisz</a>
+    </div>
+  </div>
+  <div id="editEmail" class="modal bottom-sheet">
+    <div class="modal-content">
+      <div class="row">
+      	<div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="edit_email_password" type="password" class="validate">
+          <label for="edit_email">Twoje hasło</label>
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="edit_email" type="email" class="validate">
+          <label for="edit_email">Nowy adres e-mail</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changeEmail()">Zapisz</a>
+    </div>
+  </div>
+  <div id="uploadAvatar" class="modal bottom-sheet">
+    <div class="modal-content">
+      <div class="file-field input-field">
+      <div class="btn">
+        <span><i class="material-icons">cloud_upload</i> Prześlij awatar</span>
+        <input type="file" id="upload_avatar">
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text" placeholder="Nie wybrano pliku.">
+      </div>
+    </div>
+    <div class="progress">
+      <div class="determinate" style="width: 0%" id="upload_avatar_progress"></div>
+  </div>
+  <p id="upload_avatar_state"></p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="waves-effect waves-green btn-flat" onclick="changeAvatar()">Prześlij</a>
+    </div>
+  </div>
+  <div id="resetAvatar" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Przywrócić domyślny awatar?</h4>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-grey btn-flat">Anuluj</a>
+      <a class="waves-effect waves-orange btn-flat" onclick="resetAvatar()">Przywróć domyślny awatar</a>
+    </div>
+  </div>
+  <div id="changePassword" class="modal bottom-sheet">
+    <div class="modal-content">
+      <div class="row">
+      	<div class="input-field col s12">
+          <i class="material-icons prefix">lock_open</i>
+          <input required id="old_password" type="password" class="validate">
+          <label for="edit_email">Stare hasło</label>
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="new_password" type="password" class="validate">
+          <label for="edit_email">Nowe hasło</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changePassword()">Zapisz</a>
     </div>
   </div>
 </body>
@@ -350,7 +435,7 @@
 <script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-database.js"></script>
-
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-storage.js"></script>
 <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#config-web-app -->
 <script src="https://cdn.tiny.cloud/1/6hqbfqbkupp38gqwmij0rn6amr3ozohz3wcsdi5wb8tfdrok/tinymce/5/tinymce.min.js"></script>
