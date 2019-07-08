@@ -1,4 +1,10 @@
+const nodeExternals = require('webpack-node-externals');
+
+module.exports = {
+  externals: [nodeExternals()],
+};
 var firebase = require("firebase");
+
 exports.handler = function(event, context, callback) {
 	context.callbackWaitsForEmptyEventLoop = false;  //<---Important
 
