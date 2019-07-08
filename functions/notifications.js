@@ -1,14 +1,9 @@
-const nodeExternals = require('webpack-node-externals');
-
-module.exports = {
-  externals: [nodeExternals()],
-};
-var firebase = require("firebase");
+import * as admin from 'firebase-admin';
 
 exports.handler = function(event, context, callback) {
 	context.callbackWaitsForEmptyEventLoop = false;  //<---Important
 
-    var config = {
+    /*var config = {
     apiKey: "AIzaSyBdK0boacor04eHtkpaOt-o21n-TISqBTw",
     authDomain: "jschat-official.firebaseapp.com",
     databaseURL: "https://jschat-official.firebaseio.com",
@@ -20,7 +15,7 @@ exports.handler = function(event, context, callback) {
 
     if(firebase.apps.length == 0) {   // <---Important!!! In lambda, it will cause double initialization.
         firebase.initializeApp(config);
-    }
+    }*/
 	var channel = event.headers["channel"];
     callback(null, {
     statusCode: 200,
