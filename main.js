@@ -263,6 +263,9 @@ function editChannel(){
       discoveryCreate();
     })
   }
+  function notifyRecivers(){
+	  
+  }
   function sendMessage(){
     var content = tinyMCE.activeEditor.getContent();
     if(content.length>0){
