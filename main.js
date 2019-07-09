@@ -264,7 +264,9 @@ function editChannel(){
     })
   }
   function notifyRecivers(){
-	  
+	  var senderNick = firebase.auth().currentUser.displayName;
+	  console.log("Kanał: "+channelId);
+	  console.log("Nadawca: "+senderNick);
   }
   function sendMessage(){
     var content = tinyMCE.activeEditor.getContent();
