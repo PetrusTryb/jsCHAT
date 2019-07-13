@@ -5,6 +5,6 @@ exports.handler = function(event, context, callback) {
     callback(null, {
     statusCode: 200,
     body: "Kanał: "+channel+"<br/>Nadawca: "+sender+"<br/>Odbiorcy: "+receivers,
-    headers: {"Access-Control-Allow-Origin":"*"}
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channel, sender, receivers"}
     });
 }
