@@ -178,7 +178,7 @@
   <a class="btn-floating btn-large red modal-trigger" href="#createChannel" id="openCreate" onclick="createChannelWindow()">
     <i class="large material-icons">add</i>
   </a>
-  <div class="tap-target red" data-target="openCreate">
+  <div class="tap-target red" data-target="openCreate" id="tapToCreate">
     <div class="tap-target-content">
       <h5>Chcesz utworzyć nową konwersację?</h5>
       <p>Kliknij tutaj!</p>
@@ -203,7 +203,7 @@
         <div class="progress"><div class="indeterminate"></div></div>
     </div>
     <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" onclick="actionSend(true);"><i class="large material-icons">add_comment</i></a></div>
-    <div class="tap-target blue" data-target="openSend">
+    <div class="tap-target blue" data-target="openSend" id="tapToWrite">
     <div class="tap-target-content">
       <h5>Naciśnij ten przycisk,</h5>
       <p>aby napisać wiadomość.</p>
@@ -336,7 +336,7 @@
     <p>Nick: <span id="settingsNick"></span><a class="btn-flat blue-text modal-trigger" href="#editNick"><i class="material-icons left">edit</i></a></p>
     <p>Awatar: <br/><img id="settingsAvatar" class="circle" style="width:64px; height:64px" /><a class="btn-flat blue-text modal-trigger" href="#uploadAvatar"><i class="material-icons left">cloud_upload</i></a><a class="btn-flat red-text modal-trigger" href="#resetAvatar"><i class="material-icons left">clear</i></a></p>
     <p>Adres e-mail: <span id="settingsEmail"></span><a class="btn-flat blue-text modal-trigger" href="#editEmail"><i class="material-icons left">edit</i></a></p>
-    <a class="btn blue modal-trigger" href="#changePassword"><i class="material-icons left">lock</i> Zmień hasło</a><a class="btn red"><i class="material-icons left">delete</i> Usuń konto</a>
+    <a class="btn blue modal-trigger" href="#changePassword"><i class="material-icons left">lock</i> Zmień hasło</a><a class="btn red modal-trigger" href="#confirmDeleteAccount"><i class="material-icons left">delete</i> Usuń konto</a>
     </div>
     
     <div class="modal-footer">
@@ -346,6 +346,7 @@
   </div>
   <div id="editNick" class="modal bottom-sheet">
     <div class="modal-content">
+      <h4>Zmiana nicku</h4>
       <div class="row">
         <div class="input-field col s12">
           <i class="material-icons prefix">perm_identity</i>
@@ -361,7 +362,9 @@
   </div>
   <div id="editEmail" class="modal bottom-sheet">
     <div class="modal-content">
+      <h4>Zmiana adresu e-mail</h4>
       <div class="row">
+        <p>W trosce o Twoje bezpieczeństwo wymagane jest podanie hasła.</p>
       	<div class="input-field col s12">
           <i class="material-icons prefix">lock</i>
           <input required id="edit_email_password" type="password" class="validate">
@@ -381,6 +384,7 @@
   </div>
   <div id="uploadAvatar" class="modal bottom-sheet">
     <div class="modal-content">
+      <h4>Zmiana zdjęcia profilowego</h4>
       <div class="file-field input-field">
       <div class="btn">
         <span><i class="material-icons">cloud_upload</i> Prześlij awatar</span>
@@ -411,6 +415,7 @@
   </div>
   <div id="changePassword" class="modal bottom-sheet">
     <div class="modal-content">
+      <h4>Zmiana hasła do konta</h4>
       <div class="row">
       	<div class="input-field col s12">
           <i class="material-icons prefix">lock_open</i>
@@ -427,6 +432,23 @@
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
       <a class="modal-close waves-effect waves-green btn-flat" onclick="changePassword()">Zapisz</a>
+    </div>
+  </div>
+  <div id="confirmDeleteAccount" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Usuwanie konta</h4>
+      <p class="red-text">Tej operacji nie można cofnąć.</p>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="delete_account_password" type="password" class="validate">
+          <label for="edit_email">Hasło</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat red-text" onclick="deleteAccount()">Usuń moje konto</a>
     </div>
   </div>
 </body>

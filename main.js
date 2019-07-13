@@ -22,6 +22,8 @@ var debugMode = true;
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
+  const messaging = firebase.messaging();
+  messaging.usePublicVapidKey("BPDAW6zbeuUv-DLHgb8te4i3WuWATdLYxok79bIZvUL9M08gDTV4HFh_Xp-2AMs5N55xRmzNtL4n3-4mp1zhizY");
   M.AutoInit();
   var messagesRef;
   var metaRef;
@@ -264,9 +266,27 @@ function editChannel(){
     })
   }
   function notifyRecivers(){
-	  var senderNick = firebase.auth().currentUser.displayName;
-	  console.log("Kanał: "+channelId);
+	  var senderNick = document.getElementById("nickname").innerText;
+	  console.log("Kanał: "+document.getElementById("title").innerText);
 	  console.log("Nadawca: "+senderNick);
+	  var receivers = {};
+	  firebase.database().ref("channels/"+channelId+"/permissions").once("value").then(function(snapshot){
+	  	receivers=snapshot.val();
+	  	console.log(receivers);
+	  	var req = new XMLHttpRequest();
+req.open('POST', 'https://jschat.netlify.com/.netlify/functions/notifications', true);
+req.setRequestHeader("channel", "Bar");
+req.onreadystatechange = function (aEvt) {
+  if (req.readyState == 4) {
+     if(req.status == 200)
+      console.log(req.responseText);
+     else
+      console.warn(req.responseText);
+  }
+};
+req.send(null);
+	  })
+	  
   }
   function sendMessage(){
     var content = tinyMCE.activeEditor.getContent();
@@ -322,24 +342,41 @@ function editChannel(){
       isAdmin=false;
     }
   }
+
   function discoverySend(){
     firebase.database().ref("sendDiscovery").once('value').then(function(snapshot){
+    	var alreadyDiscovered = true;
+    	try{
       if(snapshot.val()[firebase.auth().currentUser.uid]!=true){
-        var elems = document.querySelectorAll('.tap-target');
-        var instances = M.TapTarget.init(elems);
-        instances[1].open();
-        firebase.database().ref("sendDiscovery/"+firebase.auth().currentUser.uid).set(true);
+        alreadyDiscovered=false;
       }
+  }catch(Error){
+  	alreadyDiscovered=false;
+  }
+  if(!alreadyDiscovered){
+  	var elems = document.querySelectorAll('#tapToWrite');
+        var instances = M.TapTarget.init(elems);
+        instances[0].open();
+        firebase.database().ref("sendDiscovery/"+firebase.auth().currentUser.uid).set(true);
+  }
     })
   }
   function discoveryCreate(){
     firebase.database().ref("createDiscovery").once('value').then(function(snapshot){
+    	var alreadyDiscovered = true;
+    	try{
       if(snapshot.val()[firebase.auth().currentUser.uid]!=true){
-        var elems = document.querySelectorAll('.tap-target');
+        alreadyDiscovered=false;
+      }
+}catch(Error){
+	alreadyDiscovered=false;
+}
+if(!alreadyDiscovered){
+	var elems = document.querySelectorAll('#tapToCreate');
         var instances = M.TapTarget.init(elems);
         instances[0].open();
         firebase.database().ref("createDiscovery/"+firebase.auth().currentUser.uid).set(true);
-      }
+}
     })
   }
   function actionSend(show){
@@ -428,8 +465,10 @@ function editChannel(){
         if(entry[0]==firebase.auth().currentUser.displayName){
           myPosition=pos;
         }
-        table.innerHTML+="<tr id='rank"+pos+"'><td>"+pos+"</td><td>"+entry[0]+"</td><td>"+entry[1]+"<td/></tr>";
-        pos++;
+        if(entry[0]!=undefined){
+        	table.innerHTML+="<tr id='rank"+pos+"'><td>"+pos+"</td><td>"+entry[0]+"</td><td>"+entry[1]+"<td/></tr>";
+        	pos++;
+        }
       })
       //M.toast({html:"Masz "+myPosition+". miejsce."});
       document.getElementById("ranking1").innerHTML=myPosition;
@@ -477,8 +516,15 @@ function editChannel(){
   }
   function getAuthorData(msgId,message){
     firebase.database().ref("users/"+message.author).once("value").then(function(snapshot){
-          document.getElementById("info"+msgId).innerHTML="<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time);
-          scrollToBottom();
+    	try{
+    	  if(snapshot.val().actualNick)
+          	document.getElementById("info"+msgId).innerHTML="<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time);
+          else
+          	document.getElementById("info"+msgId).innerHTML="<a class='grey-text'>"+"<i>Konto usunięte "+timeAgo(snapshot.val().lastOnline)+"</i>"+"</a> &diams; "+timeAgo(message.time);
+      }catch(Error){
+      	document.getElementById("info"+msgId).innerHTML="<a class='grey-text'>"+"<i>Konto usunięte</i>"+"</a> &diams; "+timeAgo(message.time);
+      }
+      scrollToBottom();
         })
   }
   function givePoints(uid,amount){
@@ -688,6 +734,45 @@ function editChannel(){
       })
     }
   }
+  function changePassword(){
+  	var newPassword = document.getElementById("new_password").value;
+    var password = document.getElementById("old_password").value;
+    var credential = firebase.auth.EmailAuthProvider.credential(firebase.auth().currentUser.email, password);
+    if(newPassword.length>0){
+      firebase.auth().currentUser.reauthenticateWithCredential(credential).then(function() {
+  // User re-authenticated.
+  firebase.auth().currentUser.updatePassword(newPassword).then(function() {
+  // Update successful.
+  M.toast({html:"Twoje hasło zostało zmienione."})
+}).catch(function(error) {
+  M.toast({html:error.message});
+});
+}).catch(function(error) {
+  M.toast({html:error.message})
+});
+      
+    }
+}
+    function deleteAccount(){
+    var password = document.getElementById("delete_account_password").value;
+    var credential = firebase.auth.EmailAuthProvider.credential(firebase.auth().currentUser.email, password);
+      firebase.auth().currentUser.reauthenticateWithCredential(credential).then(function() {
+  // User re-authenticated.
+  var uid = firebase.auth().currentUser.uid;
+  firebase.auth().currentUser.delete().then(function() {
+  // Update successful.
+  M.toast({html:"Twoje konto zostało usunięte."});
+  firebase.database().ref("users/"+uid).remove();
+  firebase.database().ref("tokens/"+uid).remove();
+  firebase.database().ref("createDiscovery/"+uid).remove();
+  firebase.database().ref("sendDiscovery/"+uid).remove();
+}).catch(function(error) {
+  M.toast({html:error.message});
+});
+}).catch(function(error) {
+  M.toast({html:error.message})
+});
+  }
   function changeEmail(){
     var newEmail = document.getElementById("edit_email").value;
     var password = document.getElementById("edit_email_password").value;
@@ -800,7 +885,6 @@ function editChannel(){
 function sendTokenToServer(token){
   firebase.database().ref("tokens/"+firebase.auth().currentUser.uid).set(token);
 }
-const messaging = firebase.messaging();
 messaging.onTokenRefresh(() => {
   messaging.getToken().then((refreshedToken) => {
     console.log('Token refreshed.');
@@ -825,7 +909,6 @@ messaging.onMessage((payload) => {
 // any time that connectionsRef's value is null (i.e. has no children) I am offline
   if (user) {
     firebase.database().goOnline();
-    messaging.usePublicVapidKey("BPDAW6zbeuUv-DLHgb8te4i3WuWATdLYxok79bIZvUL9M08gDTV4HFh_Xp-2AMs5N55xRmzNtL4n3-4mp1zhizY");
     Notification.requestPermission().then((permission) => {
   if (permission === 'granted') {
     console.log('Notification permission granted.');
