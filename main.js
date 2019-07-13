@@ -267,15 +267,19 @@ function editChannel(){
   }
   function notifyRecivers(){
 	  var senderNick = document.getElementById("nickname").innerText;
-	  console.log("Kanał: "+document.getElementById("title").innerText);
+	  var channelName = document.getElementById("title").innerText;
+	  console.log("Kanał: "+channelName);
 	  console.log("Nadawca: "+senderNick);
-	  var receivers = {};
+	  var receivers = "";
 	  firebase.database().ref("channels/"+channelId+"/permissions").once("value").then(function(snapshot){
-	  	receivers=snapshot.val();
+	  	snapshot.forEach(function(child){
+	  		receivers+=child.key+";";
+	  	})
 	  	console.log(receivers);
 	  	var req = new XMLHttpRequest();
 req.open('POST', 'https://jschat.netlify.com/.netlify/functions/notifications', true);
-req.setRequestHeader("channel", "Bar");
+req.setRequestHeader("channel", channelName);
+req.setRequestHeader("sender", senderNick);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
      if(req.status == 200)
