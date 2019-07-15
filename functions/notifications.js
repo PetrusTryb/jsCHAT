@@ -2,6 +2,8 @@ exports.handler = function(event, context, callback) {
 	var channel = event.headers["channel"];
 	var sender = event.headers["sender"];
 	var receivers = event.headers["receivers"];
+	console.log(channel);
+	console.log(sender);
 	console.log(receivers);
 	var splittedReceivers = receivers.split(";");
 	splittedReceivers.forEach(function(receiver){
