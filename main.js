@@ -134,21 +134,21 @@ function renameChannel(){
 	console.groupEnd("Zmiana nazwy kanału #"+channelId);
 }
   function openChannelSelector(){
+  	console.group("Selektor konwersacji");
     setTitle("Konwersacje");
     adminOptions(false);
-    document.getElementById("channelWindow").style.display="none";
-    document.getElementById("channelSelector").style.display="block";
+    $("#channelWindow").hide();
+    $("#channelSelector").show();
     firebase.database().ref("channels").once('value').then(function(snapshot){
-      var table = document.getElementById("channelSelectorBody");
-      table.innerHTML="";
+      var table = $("#channelSelectorBody");
+      table.html("");
       snapshot.forEach(function(childSnapshot){
         key=childSnapshot.key;
         var childName = childSnapshot.val().name;
-        //console.log(key+" "+childName);
         var permission = childSnapshot.val().permissions[firebase.auth().currentUser.uid];
         if(permission===undefined)
           permission = childSnapshot.val().permissions["EVERYONE"];
-        //console.log(permission);
+      	console.log(key+" ("+childName+"): "+permission);
         if(permission!=undefined){
           var permText;
           switch(permission){
@@ -162,17 +162,20 @@ function renameChannel(){
               permText='<i class="small material-icons" style="width:25px">remove_red_eyes</i> Gość';
               break;
           }
-          //console.log(permText);
-          table.innerHTML+="<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+permText+"</td></tr>";
+          table.append("<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+permText+"</td></tr>");
           
         }
       })
       discoveryCreate();
+
+      console.info("Wczytywanie dostępnych kanałów czatu powiodło się.");
+      console.groupEnd("Selektor konwersacji");
     })
   }
   function notifyRecivers(){
-	  var senderNick = document.getElementById("nickname").innerText;
-	  var channelName = document.getElementById("title").innerText;
+  	  console.group("Wysyłanie powiadomień");
+	  var senderNick = $("#nickname").text();
+	  var channelName = $("#title").text();
 	  console.log("Kanał: "+channelName);
 	  console.log("Nadawca: "+senderNick);
 	  var receivers = "";
@@ -180,17 +183,19 @@ function renameChannel(){
 	  	snapshot.forEach(function(child){
 	  		receivers+=child.key+";";
 	  	})
-	  	console.log(receivers);
+	  	console.log("Odbiorcy: "+receivers);
 	  	var req = new XMLHttpRequest();
 req.open('POST', 'https://jschat.netlify.com/.netlify/functions/notifications', true);
 req.setRequestHeader("channel", channelName);
 req.setRequestHeader("sender", senderNick);
+req.setRequestHeader("receivers",receivers);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
      if(req.status == 200)
-      console.log(req.responseText);
+      console.info(req.responseText);
      else
-      console.warn(req.responseText);
+      console.error(req.responseText);
+  	console.groupEnd("Wysyłanie powiadomień");
   }
 };
 req.send(null);
