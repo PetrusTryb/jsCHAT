@@ -1,15 +1,5 @@
-var debugMode = true;
-  (function(){
-    var Log = console.log;
-    console.log = function (message) {
-        // DO MESSAGE HERE.
-        if(debugMode)
-        Log(message);
-    };
-})();
-  // Your web app's Firebase configuration
   window.onerror=function(){
-    M.toast({html:"Błąd krytyczny."});
+    M.toast({html:"<i class='material-icons'>error</i> Błąd!"});
   }
   var firebaseConfig = {
     apiKey: "AIzaSyBdK0boacor04eHtkpaOt-o21n-TISqBTw",
@@ -25,209 +15,124 @@ var debugMode = true;
   const messaging = firebase.messaging();
   messaging.usePublicVapidKey("BPDAW6zbeuUv-DLHgb8te4i3WuWATdLYxok79bIZvUL9M08gDTV4HFh_Xp-2AMs5N55xRmzNtL4n3-4mp1zhizY");
   M.AutoInit();
+  //M.toast({html:"Logowanie...",displayLength:500});
   var messagesRef;
   var metaRef;
   tinymce.init({ selector:'#textedit',plugins: ['media image emoticons autolink charmap code preview'],
-    //images_upload_url: 'upload.php',
     file_picker_types: 'file image media',
-    block_formats:'Paragraf=p; Nagłówek 1=h1; Nagłówek 2=h2; Nagłówek 3=h3; Nagłówek 4=h4; Nagłówek 5=h5; Nagłówek 6=h6; Tekst preformatowany=pre',
     branding: false,
-
   automatic_uploads: false,
   relative_urls : false,
 remove_script_host : false,
-//document_base_url : "",
-  //emoticons_database_url: 'emojiDBMS.js',
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview',
   mobile: {
     theme: 'silver',
     plugins: ['media image emoticons autolink charmap code'],
   images_upload_url: 'upload.php',
   automatic_uploads: false,
-  //emoticons_database_url: 'emojiDBMS.js',
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview'
   }
         });
-  //M.toast({html:"Ładowanie..."});
-  var Ainstances,Minstances,Ginstances;
   function createChannel(){
-    console.info("Tworzenie konwersacji...");
+    console.group("Tworzenie konwersacji");
     firebase.database().ref("chan_count").once("value").then(function(snapshot){
-      var name = document.getElementById("chan_name").value;
+      var name = $("#chan_name").val();
       var id=snapshot.val();
     if(name.length==0){
   name="Konwersacja #"+id;
-  M.toast({html:"Nie podano nazwy konwersacji. Administratorzy będą mogli ją później ustawić."});
   }
-  console.log("Nazwa: "+name);
-  var perms={};
-  perms[firebase.auth().currentUser.uid]="ADMIN";
-  Ainstances[0].chipsData.forEach(function(chip){
-      perms[chip.tag.slice(chip.tag.search("#")+1,-1)]="ADMIN";
-    })
-  Minstances[0].chipsData.forEach(function(chip){
-      perms[chip.tag.slice(chip.tag.search("#")+1,-1)]="MEMBER";
-    })
-  Ginstances[0].chipsData.forEach(function(chip){
-      perms[chip.tag.slice(chip.tag.search("#")+1,-1)]="GUEST";
-    })
+  var items = $(".userSelectorCheckbox");
+  var perms = {};
+  $.each(items,function(item){
+  	if(items[item].checked)
+  		perms[items[item].id]="MEMBER";
+  	if(items[item].disabled)
+  		perms[items[item].id]="ADMIN";
+  })  
   var chanJson = {
     name:name,
     permissions:perms,
     messages_count:0
   };
-    
     console.log(chanJson);
     firebase.database().ref("channels/"+id).set(chanJson).then(function(){
       firebase.database().ref("chan_count").set(id+1).then(function(){
         M.toast({html:"Konwersacja została utworzona."});
         openChannelSelector();
+        console.info("Zakończono powodzeniem.");
+        console.groupEnd("Tworzenie konwersacji");
       })
     })
     })
   }
   function createChannelWindow(){
+  	console.group("Okno tworzenia konwersacji");
+  	$("#userSelector").html("");
     firebase.database().ref("users").once('value').then(function(snapshot){
-      var jsonUsers = Object;
       snapshot.forEach(function(childSnapshot) {
-      // key will be "ada" the first time and "alan" the second time
-      var key = childSnapshot.key;
-      // childData will be the actual contents of the child
-      var childData = childSnapshot.val().actualNick;
-      jsonUsers[childData+" (#"+key+")"]=null;
+      console.log(childSnapshot.val());
+      var uid = childSnapshot.key;
+      var nick = childSnapshot.val().actualNick;
+      var avatar = childSnapshot.val().actualImage;
+      if(uid!=firebase.auth().currentUser.uid)
+      	$("#userSelector:last-child").append('<tr><td><label><input type="checkbox" class="userSelectorCheckbox" id="'+uid+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+'</span></label></td></tr>');
+      else
+      	$("#userSelector:last-child").append('<tr class="yellow accent-2"><td><label><input type="checkbox" checked="checked" disabled="disabled" class="userSelectorCheckbox" id="'+uid+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+' (Ty)</span></label></td></tr>');
   });
-      jsonUsers["Wszyscy (#EVERYONE)"]=null;
-      var Aelems = document.querySelectorAll('#adminsSelect');
-      var Aoptions= {
-        autocompleteOptions:{
-      data: jsonUsers
-  },
-      limit: Infinity,
-      minLength: 1,
-      placeholder: "Administratorzy"
-    }
-    Ainstances = M.Chips.init(Aelems, Aoptions);
-
-    var Melems = document.querySelectorAll('#membersSelect');
-      var Moptions= {
-        autocompleteOptions:{
-      data: jsonUsers
-  },
-      limit: Infinity,
-      minLength: 1,
-      placeholder: "Członkowie"
-    }
-    Minstances = M.Chips.init(Melems, Moptions);
-
-    var Gelems = document.querySelectorAll('#guestsSelect');
-      var Goptions= {
-        autocompleteOptions:{
-      data: jsonUsers
-  },
-      limit: Infinity,
-      minLength: 1,
-      placeholder: "Goście"
-    }
-    Ginstances = M.Chips.init(Gelems, Goptions);
+      console.info("Zakończono ładowanie listy użytkowników.");
+      console.groupEnd("Okno tworzenia konwersacji");
   })
+
 }
 function editChannelWindow(){
-  console.log(channelId);
-  var nameBox = document.getElementById("edit_chan_name"); 
-  firebase.database().ref("users").once('value').then(function(snapshot){
-      var jsonUsers = {
-        "Wszyscy (#EVERYONE)": null
-      };
-      var uidPairs = {
-        "EVERYONE":"Wszyscy"
-      };
-      snapshot.forEach(function(childSnapshot) {
-      // key will be "ada" the first time and "alan" the second time
-      var key = childSnapshot.key;
-      // childData will be the actual contents of the child
-      var childData = childSnapshot.val().actualNick;
-      jsonUsers[childData+" (#"+key+")"]=null;
-      uidPairs[key]=childData;
-  });
-      //jsonUsers["Wszyscy (#EVERYONE)"]=null;
-      var Aelems = document.querySelectorAll('#adminsSelect');
-      var Aoptions= {
-        autocompleteOptions:{
-      data: jsonUsers
-  },
-      limit: Infinity,
-      minLength: 1,
-      placeholder: "Administratorzy"
-    }
-    Ainstances = M.Chips.init(Aelems, Aoptions);
-
-    var Melems = document.querySelectorAll('#membersSelect');
-      var Moptions= {
-        autocompleteOptions:{
-      data: jsonUsers
-  },
-      limit: Infinity,
-      minLength: 1,
-      placeholder: "Członkowie"
-    }
-    Minstances = M.Chips.init(Melems, Moptions);
-
-    var Gelems = document.querySelectorAll('#guestsSelect');
-      var Goptions= {
-        autocompleteOptions:{
-      data: jsonUsers
-  },
-      limit: Infinity,
-      minLength: 1,
-      placeholder: "Goście"
-    }
-    Ginstances = M.Chips.init(Gelems, Goptions);
-    firebase.database().ref("channels/"+channelId).once("value").then(function(snapshot){
-    nameBox.value=snapshot.val().name;
-    M.updateTextFields();
-    var perms = Object;
-    perms=snapshot.val().permissions;
-    console.log(perms);
-    for(var perm in perms){
-      switch(perms[perm]){
-        case "ADMIN":
-          Ainstances[Ainstances.length-1].addChip({tag:uidPairs[perm]+" (#"+perm+")"});
-          break;
-        case "MEMBER":
-          Minstances[Minstances.length-1].addChip({tag:uidPairs[perm]+" (#"+perm+")"});
-          break;
-        case "GUEST":
-          Ginstances[Ginstances.length-1].addChip({tag:uidPairs[perm]+" (#"+perm+")"});
-      }
-    }
-
-  })
-  })
-  
+	console.group("Okno właściwości konwersacji");
+	$("#chan_edit_name").val($("#title").html());
+	M.updateTextFields();
+	$("#userManager").html("");
+	firebase.database().ref("channels/"+channelId+"/permissions").once("value").then(function(snapshot){
+		console.log(snapshot.val());
+		snapshot.forEach(function(user){
+			//if(user.key!="EVERYONE")
+			firebase.database().ref("users/"+user.key).once("value").then(function(snapshot){
+				var uid = user.key;
+				if(uid!="EVERYONE"){
+				var nick = snapshot.val().actualNick;
+				var avatar = snapshot.val().actualImage;
+			}
+			else{
+				var nick="<i>Wszyscy</i>";
+				var avatar = "logo_small.png";
+			}
+				switch(user.val()){
+					case "ADMIN":
+						$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td><i class="material-icons">star</i> Administrator</td></tr>');
+						break;
+					case "MEMBER":
+						$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td><i class="material-icons">message</i> Członek</td></tr>');
+						break;
+					case "GUEST":
+						$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td><i class="material-icons">block</i> Wyciszony</td></tr>');
+						break;
+				}
+				
+			})
+		})
+		console.info("Załadowano informacje o uprawnieniach.");
+		console.groupEnd("Okno właściwości konwersacji");
+	})
 }
-function editChannel(){
-    M.toast({html:"Zapisywanie ustawień..."});
-    console.info("Stosowanie zmian...");
-    var name = document.getElementById("edit_chan_name").value;
-    var perms = {};
-    Ainstances[Ainstances.length-1].chipsData.forEach(function(chip){
-      perms[chip.tag.slice(chip.tag.search("#")+1,-1)]="ADMIN";
-    })
-  Minstances[Ainstances.length-1].chipsData.forEach(function(chip){
-      perms[chip.tag.slice(chip.tag.search("#")+1,-1)]="MEMBER";
-    })
-  Ginstances[Ainstances.length-1].chipsData.forEach(function(chip){
-      perms[chip.tag.slice(chip.tag.search("#")+1,-1)]="GUEST";
-    })
-  console.log(perms);
-    firebase.database().ref("channels/"+channelId).update(
-    {
-      "name":name,
-      "permissions":perms
-    }).then(function(){
-      M.toast({html:"Pomyślnie zastosowano zmiany."});
-    })
-  }
+function renameChannel(){
+	console.group("Zmiana nazwy kanału #"+channelId);
+	var newName = $("#chan_edit_name").val();
+	console.log("Nowa nazwa: "+newName);
+	if(newName.length>0){
+		firebase.database().ref("channels/"+channelId+"/name").set(newName).then(function(){
+			M.toast({html:"Zmieniono nazwę kanału na: "+newName});
+			console.info("Zakończono powodzeniem.");
+		})
+	}
+	console.groupEnd("Zmiana nazwy kanału #"+channelId);
+}
   function openChannelSelector(){
     setTitle("Konwersacje");
     adminOptions(false);
@@ -313,7 +218,7 @@ req.send(null);
     })
   }
   else{
-    M.toast({html:"Nie wolno wysyłać pustych wiadomości."});
+    M.toast({html:"Nie wolno wysyłać pustych wiadomości.",classes:"yellow accent-2 red-text"});
   }
   }
   function countMessage(uid,type){
@@ -478,7 +383,7 @@ if(!alreadyDiscovered){
       document.getElementById("ranking1").innerHTML=myPosition;
       document.getElementById("ranking2").innerHTML=myPosition;
       document.getElementById("rank"+myPosition).style.fontWeight="bold";
-      document.getElementById("rank"+myPosition).style.color="red";
+      document.getElementById("rank"+myPosition).className="yellow accent-2";
       try{
       document.getElementById("rank1").className="amber";
       document.getElementById("rank2").className="blue-grey";
@@ -663,7 +568,7 @@ if(!alreadyDiscovered){
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.innerHTML+="<div class='my' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+firebase.auth().currentUser.photoURL+"'>Ty</a> &diams; "+timeAgo(message.time)+"</p></div>";
+        messagesDiv.innerHTML+="<div class='my yellow accent-2' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+firebase.auth().currentUser.photoURL+"'>Ty</a> &diams; "+timeAgo(message.time)+"</p></div>";
       }
       else{
         messagesDiv.innerHTML+="<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>";
@@ -919,11 +824,12 @@ messaging.onMessage((payload) => {
     messaging.getToken().then((currentToken) => {
   if (currentToken) {
     console.log(currentToken);
+    M.toast({html:"Usługa powiadomień uruchomiona.",classes:"green darken-4"});
+    M.toast({html:currentToken,classes:"blue accent-2"});
     sendTokenToServer(currentToken);
     //updateUIForPushEnabled(currentToken);
   } else {
-    // Show permission request.
-    console.log('No Instance ID token available. Request permission to generate one.');
+    console.log('No Instance ID token available.');
   }
 }).catch((err) => {
   console.error('An error occurred while retrieving token. ', err);
@@ -933,7 +839,7 @@ messaging.onMessage((payload) => {
 
   } else {
     console.error('Unable to get permission to notify.');
-    M.toast({html:"Powiadomienia są zablokowane. Nie będziesz otrzymywał informacji o nowych wiadomościach."});
+    M.toast({html:"Powiadomienia są zablokowane. Nie będziesz otrzymywał informacji o nowych wiadomościach.",classes:"yellow accent-2 red-text"});
   }
 });
 
