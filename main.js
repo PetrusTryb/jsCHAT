@@ -178,29 +178,21 @@ function renameChannel(){
 	  var channelName = $("#title").text();
 	  console.log("Kanał: "+channelName);
 	  console.log("Nadawca: "+senderNick);
-	  var receivers = "";
-	  firebase.database().ref("channels/"+channelId+"/permissions").once("value").then(function(snapshot){
-	  	snapshot.forEach(function(child){
-	  		receivers+=child.key+";";
-	  	})
-	  	console.log("Odbiorcy: "+receivers);
-	  	var req = new XMLHttpRequest();
+	  var req = new XMLHttpRequest();
 req.open('POST', 'https://jschat.netlify.com/.netlify/functions/notifications', true);
-req.setRequestHeader("channel", channelName);
-req.setRequestHeader("sender", senderNick);
-req.setRequestHeader("receivers",receivers);
+req.setRequestHeader("channelName", channelName);
+req.setRequestHeader("senderNick", senderNick);
+req.setRequestHeader("channelId",channelId);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
      if(req.status == 200)
       console.info(req.responseText);
      else
       console.error(req.responseText);
-  	console.groupEnd("Wysyłanie powiadomień");
+     console.groupEnd("Wysyłanie powiadomień");
   }
 };
-req.send(null);
-	  })
-	  
+req.send(null);	  
   }
   function sendMessage(){
     var content = tinyMCE.activeEditor.getContent();
@@ -829,8 +821,8 @@ messaging.onMessage((payload) => {
     messaging.getToken().then((currentToken) => {
   if (currentToken) {
     console.log(currentToken);
-    M.toast({html:"Usługa powiadomień uruchomiona.",classes:"green darken-4"});
-    M.toast({html:currentToken,classes:"blue accent-2"});
+    M.toast({html:"Usługa powiadomień uruchomiona.",classes:"green darken-4",displayLength:200});
+    M.toast({html:currentToken,classes:"blue accent-2",displayLength:200});
     sendTokenToServer(currentToken);
     //updateUIForPushEnabled(currentToken);
   } else {
