@@ -1,0 +1,8 @@
+{
+  "name": "jsCHAT",
+  "version": "BETA",
+  "description": "Jedyny słuszny komunikator!",
+  "dependencies": {
+    "node-fetch": "^2.1.2"
+  }
+}
