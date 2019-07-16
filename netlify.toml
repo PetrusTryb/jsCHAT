@@ -1,2 +1,2 @@
 [context.production]
-  command = "npm i node-fetch"
+  command = "npm run build"
