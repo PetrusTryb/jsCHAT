@@ -1,2 +1,2 @@
 [context.production]
-  command = "npm install node-fetch --save"
+  command = "npm i node-fetch"
