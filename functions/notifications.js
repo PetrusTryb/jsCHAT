@@ -4,7 +4,9 @@ exports.handler = function(event, context, callback) {
 	var channelId = event.headers["channelId"];
 	console.log(channelId);
 	var channelName = event.headers["channelName"];
+	console.log(channelName);
 	var senderNick = event.headers["senderNick"];
+	console.log(senderNick);
 	var channelSpecificReceivers = fetch("https://jschat-official.firebaseio.com/channels/"+channelId+"/permissions.json").then(resp => resp.json())
     .then(resp => {
         console.log(resp);
