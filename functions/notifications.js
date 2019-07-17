@@ -11,7 +11,7 @@ exports.handler = function(event, context, callback) {
     .then(resp => {
         Object.keys(resp).forEach(function(key){
     		console.log(key);
-				fetch("https://jschat-official.firebaseio.com/tokens/"+key).then(token => token.json())
+				fetch("https://jschat-official.firebaseio.com/tokens/"+key+".json").then(token => token.json())
     .then(token => {
 					console.log(token)
 		});
