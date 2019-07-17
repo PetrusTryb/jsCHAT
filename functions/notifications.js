@@ -13,6 +13,7 @@ exports.handler = function(event, context, callback) {
     		console.log(key);
 				fetch("https://jschat-official.firebaseio.com/tokens/"+key+".json").then(token => token.json())
     .then(token => {
+		if(token!=null){
 		var message = {
     "to": token,
     "notification": {
@@ -21,6 +22,12 @@ exports.handler = function(event, context, callback) {
       "click_action":"https://jschat.netlify.com/"
       }}
 		console.log(message);
+		fetch("https://fcm.googleapis.com/fcm/send",{
+        method: 'post',
+        body:    JSON.stringify(message),
+        headers: { 'Content-Type': 'application/json' },
+    })
+		}
 		});
 	});
 });
