@@ -1,2 +1,2 @@
 [build]
-  command = "npm i node-fetch --save"
+  command = "npm build"
