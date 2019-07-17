@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Jedyny słuszny komunikator!",
   "license" : "MIT",
-  "repository": "github:PetrusTryb/jsCHAT"
+  "repository": "github:PetrusTryb/jsCHAT",
   "dependencies": {
     "node-fetch": "^2.1.2"
   }
