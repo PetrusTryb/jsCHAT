@@ -1,5 +1,7 @@
 const fetch = require("node-fetch");
 exports.handler = function(event, context, callback) {
+	console.log(event.httpMethod);
+	console.log(event.headers);
 	if(event.httpMethod!="OPTIONS"){
 	var channelId = event.headers["channelId"];
 	console.log(channelId);
