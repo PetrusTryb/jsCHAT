@@ -13,7 +13,14 @@ exports.handler = function(event, context, callback) {
     		console.log(key);
 				fetch("https://jschat-official.firebaseio.com/tokens/"+key+".json").then(token => token.json())
     .then(token => {
-					console.log(token)
+		var message = {
+    "to": token,
+    "notification": {
+      "title": channelName,
+      "body": "Nowa wiadomość od: "+senderNick,
+      "click_action":"https://jschat.netlify.com/"
+      }}
+		console.log(message);
 		});
 	});
 });
