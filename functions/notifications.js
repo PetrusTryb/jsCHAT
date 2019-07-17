@@ -2,6 +2,7 @@ const fetch = require("node-fetch");
 exports.handler = function(event, context, callback) {
 	if(event.httpMethod!="OPTIONS"){
 	var channelId = event.headers["channelId"];
+	console.log(channelId);
 	var channelName = event.headers["channelName"];
 	var senderNick = event.headers["senderNick"];
 	var channelSpecificReceivers = fetch("https://jschat-official.firebaseio.com/channels/"+channelId+"/permissions.json").then(resp => resp.json())
