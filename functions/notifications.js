@@ -25,19 +25,13 @@ exports.handler = function(event, context, callback) {
 		fetch("https://fcm.googleapis.com/fcm/send",{
         method: 'post',
         body:    JSON.stringify(message),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'authorization': 'key='+process.env.fcm_server_key},
     })
 		}
 		});
 	});
 });
-		/*var message = {
-    "to": receiver,
-    "notification": {
-      "title": channel,
-      "body": "Nowa wiadomość od: "+sender,
-      "click_action":"https://jschat.netlify.com/"
-      }
+		/*
 	var req = new XMLHttpRequest();
 req.open('POST', 'https://fcm.googleapis.com/fcm/send', true);
 req.setRequestHeader("content-type", "application/json");
