@@ -1,7 +1,5 @@
 const fetch = require("node-fetch");
 exports.handler = function(event, context, callback) {
-	console.log(event.httpMethod);
-	console.log(event.headers);
 	if(event.httpMethod!="OPTIONS"){
 	var channelId = event.headers["channelid"];
 	console.log(channelId);
@@ -9,10 +7,16 @@ exports.handler = function(event, context, callback) {
 	console.log(channelName);
 	var senderNick = event.headers["sendernick"];
 	console.log(senderNick);
-	var channelSpecificReceivers = fetch("https://jschat-official.firebaseio.com/channels/"+channelId+"/permissions.json").then(resp => resp.json())
+	fetch("https://jschat-official.firebaseio.com/channels/"+channelId+"/permissions.json").then(resp => resp.json())
     .then(resp => {
-        console.log(resp);
-    });
+        Object.keys(resp).forEach(function(key){
+    		console.log(key);
+				fetch("https://jschat-official.firebaseio.com/tokens/"+key).then(token => token.json())
+    .then(token => {
+					console.log(token)
+		});
+	});
+});
 		/*var message = {
     "to": receiver,
     "notification": {
