@@ -16,10 +16,13 @@ exports.handler = function(event, context, callback) {
 		if(token!=null){
 		var message = {
     "to": token,
+			"collapse_key": "Nowe wiadomości: "+channelName,
+			"priority": "high",
     "notification": {
       "title": channelName,
       "body": "Nowa wiadomość od: "+senderNick,
-      "click_action":"https://jschat.netlify.com/"
+      "click_action":"https://jschat.netlify.com/",
+			"icon": "https://jschat.netlify.com/logo_small.png"
       }}
 		console.log(message);
 		fetch("https://fcm.googleapis.com/fcm/send",{
