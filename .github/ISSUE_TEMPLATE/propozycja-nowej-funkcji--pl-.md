@@ -2,7 +2,7 @@
 name: Propozycja nowej funkcji (PL)
 about: Masz jakiś pomysł? Podziel się nim!
 title: Propozycja
-labels: enhancement
+labels: feature
 assignees: PetrusTryb
 
 ---
