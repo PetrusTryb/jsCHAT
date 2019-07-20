@@ -5,5 +5,5 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "frame-ancestors 'self';default-src 'self' wss://s-usc1c-nss-200.firebaseio.com https://s-usc1c-nss-200.firebaseio.com https://www.googleapis.com https://securetoken.googleapis.com https://rainmaker.tiny.cloud; font-src https://fonts.gstatic.com; img-src *; object-src 'none'; script-src https://d33wubrfki0l68.cloudfront.net https://jschat.netlify.com https://jschat-official.firebaseio.com https://s-usc1c-nss-200.firebaseio.com https://code.jquery.com https://cdnjs.cloudflare.com https://www.gstatic.com https://cdn.tiny.cloud; style-src * 'unsafe-inline'"
+    Content-Security-Policy = "Content-Security-Policy: default-src *; object-src 'none'"
     X-Content-Type-Options = "nosniff"
