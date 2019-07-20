@@ -5,5 +5,5 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "default-src *; object-src 'none'"
+    Content-Security-Policy = "default-src https: object-src 'none'"
     X-Content-Type-Options = "nosniff"
