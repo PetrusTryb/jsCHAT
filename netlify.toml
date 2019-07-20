@@ -4,6 +4,6 @@
   for = "*"
   [headers.values]
     X-Frame-Options = "DENY"
-    Content-Security-Policy = "default-src 'none'; script-src 'none'; script-src-elem https:; object-src 'none'; connect-src *; style-src 'none'; style-src-elem https:; font-src https:; manifest-src 'self'; img-src https:"
+    Content-Security-Policy = "default-src 'none'; script-src 'none'; script-src-elem https:; worker-src 'self'; object-src 'none'; connect-src *; style-src 'none'; style-src-elem https:; font-src https:; manifest-src 'self'; img-src https:"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
