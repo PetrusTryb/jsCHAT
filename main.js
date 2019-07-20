@@ -153,13 +153,13 @@ function renameChannel(){
           var permText;
           switch(permission){
             case "ADMIN":
-              permText='<i class="small material-icons" style="width:25px">star_rate</i> Administrator';
+              permText='<i class="small material-icons">star</i> Administrator';
               break;
             case "MEMBER":
-              permText='<i class="small material-icons" style="width:25px">message</i> Członek';
+              permText='<i class="small material-icons">message</i> Członek';
               break;
             case "GUEST":
-              permText='<i class="small material-icons" style="width:25px">remove_red_eyes</i> Gość';
+              permText='<i class="small material-icons">remove_red_eyes</i> Gość';
               break;
           }
           table.append("<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+permText+"</td></tr>");
@@ -410,7 +410,7 @@ if(!alreadyDiscovered){
       if(snapshot.val().adminDeleted_count)
         deletedByAdminCountField.innerHTML="Usuniętych przez administratorów: "+snapshot.val().adminDeleted_count;
       if(snapshot.val().connections){
-        activityField.innerHTML="<span style='color:green'>Aktywny teraz</span>";
+        activityField.innerHTML="<span class='green-text'>Aktywny teraz</span>";
       }
       else{
         //new Date(snapshot.val().lastOnline).toLocaleString()
@@ -424,7 +424,7 @@ if(!alreadyDiscovered){
     firebase.database().ref("users/"+message.author).once("value").then(function(snapshot){
     	try{
     	  if(snapshot.val().actualNick)
-          	document.getElementById("info"+msgId).innerHTML="<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time);
+          	document.getElementById("info"+msgId).innerHTML="<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time);
           else
           	document.getElementById("info"+msgId).innerHTML="<a class='grey-text'>"+"<i>Konto usunięte "+timeAgo(snapshot.val().lastOnline)+"</i>"+"</a> &diams; "+timeAgo(message.time);
       }catch(Error){
@@ -565,7 +565,7 @@ if(!alreadyDiscovered){
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.innerHTML+="<div class='my yellow accent-2' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle' style='width:24px; height:24px' src='"+firebase.auth().currentUser.photoURL+"'>Ty</a> &diams; "+timeAgo(message.time)+"</p></div>";
+        messagesDiv.innerHTML+="<div class='my yellow accent-2' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>Ty</a> &diams; "+timeAgo(message.time)+"</p></div>";
       }
       else{
         messagesDiv.innerHTML+="<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>";
