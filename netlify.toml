@@ -5,6 +5,5 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "frame-ancestors 'self';default-src 'none'; font-src 'https://fonts.googleapis.com';
-			 img-src *; object-src 'none'; script-src 'self'; style-src 'self'"
+    Content-Security-Policy = "frame-ancestors 'self';default-src 'none'; font-src 'https://fonts.googleapis.com';img-src *; object-src 'none'; script-src 'self'; style-src 'self'"
     X-Content-Type-Options = "nosniff"
