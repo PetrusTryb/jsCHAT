@@ -5,5 +5,5 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "frame-ancestors 'self';default-src https://www.googleapis.com; font-src https://fonts.gstatic.com; img-src *; object-src 'none'; script-src https://d33wubrfki0l68.cloudfront.net https://code.jquery.com https://cdnjs.cloudflare.com https://www.gstatic.com https://cdn.tiny.cloud; style-src * 'unsafe-inline'"
+    Content-Security-Policy = "frame-ancestors 'self';default-src 'self' https://www.googleapis.com; font-src https://fonts.gstatic.com; img-src *; object-src 'none'; script-src https://d33wubrfki0l68.cloudfront.net https://code.jquery.com https://cdnjs.cloudflare.com https://www.gstatic.com https://cdn.tiny.cloud; style-src * 'unsafe-inline'"
     X-Content-Type-Options = "nosniff"
