@@ -4,6 +4,6 @@
   for = "*"
   [headers.values]
     X-Frame-Options = "DENY"
-    Content-Security-Policy = "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+    Content-Security-Policy = "default-src *; script-src https://jschat.netlify.com/ https://cdnjs.cloudflare.com https://code.jquery.com/; object-src 'none'"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
