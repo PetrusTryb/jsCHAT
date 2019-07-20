@@ -5,5 +5,5 @@
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    Content-Security-Policy = "default-src https: object-src 'none'"
+    Content-Security-Policy = "default-src 'self' 'unsafe-inline' *.googleapis.com cdnjs.cloudflare.com code.jquery.com;"
     X-Content-Type-Options = "nosniff"
