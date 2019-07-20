@@ -4,6 +4,6 @@
   for = "*"
   [headers.values]
     X-Frame-Options = "DENY"
-    Content-Security-Policy = "default-src 'none'; script-src https://jschat.netlify.com/ https://cdnjs.cloudflare.com https://code.jquery.com/; script-src-elem https:; object-src 'none'; connect-src *; style-src https://cdnjs.cloudflare.com https://fonts.googleapis.com https://jschat.netlify.com; img-src https:"
+    Content-Security-Policy = "default-src 'none'; script-src https://jschat.netlify.com/ https://cdnjs.cloudflare.com https://code.jquery.com/; script-src-elem https:; object-src 'none'; connect-src *; style-src https://cdnjs.cloudflare.com https://fonts.googleapis.com https://jschat.netlify.com; font-src https:; manifest-src 'self'; img-src https:"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
