@@ -7,4 +7,4 @@
     Content-Security-Policy = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; script-src-elem https:; worker-src 'self'; object-src 'none'; connect-src *; style-src 'unsafe-inline'; style-src-elem https:; font-src https:; manifest-src 'self'; img-src https:; frame-ancestors 'none'; base-uri 'none';form-action 'self'"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Strict-Transport-Security = max-age=63072000; includeSubDomains; preload
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
