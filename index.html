@@ -128,6 +128,7 @@
     <nav>
     <div class="nav-wrapper blue accent-2">
       <a class="brand-logo"><img src="logo.png" class="small_logo" title="jsCHAT&#13;Jedyny słuszny komunikator"> <span id="title" class="flow-text"></span></a>
+
       <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
       <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". miejsce" id="ranking1"></span></a></li>
@@ -155,13 +156,13 @@
   </ul>
   <div id="channelSelector">
     <div class="fixed-action-btn">
-  <a class="btn-floating btn-large green darken-4 modal-trigger" href="#createChannel" id="openCreate" onclick="createChannelWindow()">
+  <a class="btn-floating btn-large green darken-4 modal-trigger" id="openCreate" href="#createChannel" onclick="createChannelWindow()">
     <i class="large material-icons">add</i>
   </a>
-  <div class="tap-target yellow accent-2" data-target="openCreate" id="tapToCreate">
+  <div class="tap-target yellow accent-2" data-target="openCreate" id="create">
     <div class="tap-target-content">
       <h5>Chcesz utworzyć nową konwersację?</h5>
-      <p>Kliknij tutaj!</p>
+      <p>Kliknij ten przycisk, aby zaprosić ludzi do konwersacji.</p>
     </div>
   </div>
 </div>
@@ -183,10 +184,10 @@
         <div class="progress"><div class="indeterminate"></div></div>
     </div>
     <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" onclick="actionSend(true);"><i class="large material-icons">add_comment</i></a></div>
-    <div class="tap-target yellow accent-2" data-target="openSend" id="tapToWrite">
+    <div class="tap-target yellow accent-2" data-target="openSend" id="sendPanel">
     <div class="tap-target-content">
-      <h5>Naciśnij ten przycisk,</h5>
-      <p>aby napisać wiadomość.</p>
+      <h5>Aby napisać wiadomość,</h5>
+      <p>naciśnij ten przycisk. W wiadomości możesz używać zaawansowanego formatowania tekstu.</p>
     </div>
   </div>
     <div id="write" class="hidden">
@@ -274,13 +275,13 @@
   </div>
   <div id="messageActions" class="modal bottom-sheet">
     <div class="modal-content">
-      <button class="btn green waves-effect" id="upvote"><i class="material-icons">thumb_up</i></button>
+      <button class="btn green waves-effect modal-close" id="upvote"><i class="material-icons">thumb_up</i></button>
       <span id="votes"></span>
-      <button class="btn orange waves-effect" id="downvote"><i class="material-icons">thumb_down</i></button>
+      <button class="btn orange waves-effect modal-close" id="downvote"><i class="material-icons">thumb_down</i></button>
       <p id="yourVote"></p>
-      <button class="btn waves-effect btn-flat grey" id="voteBack"><i class="material-icons">undo</i> Cofnij moją reakcję</button>
+      <button class="btn waves-effect btn-flat grey modal-close" id="voteBack"><i class="material-icons">undo</i> Cofnij moją reakcję</button>
       <br/><br/>
-      <button class="btn waves-effect btn-flat red" id="deleteMessage"><i class="material-icons">delete</i> Usuń dla wszystkich</button>
+      <button class="btn waves-effect btn-flat red modal-close" id="deleteMessage"><i class="material-icons">delete</i> Usuń dla wszystkich</button>
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-teal btn-flat">Anuluj</a>
@@ -344,13 +345,11 @@
         <p>W trosce o Twoje bezpieczeństwo wymagane jest podanie hasła.</p>
       	<div class="input-field col s12">
           <i class="material-icons prefix">lock</i>
-          <input required id="edit_email_password" type="password" class="validate">
-          <label for="edit_email">Twoje hasło</label>
+          <input required id="edit_email_password" type="password" class="validate" placeholder="Hasło do Twojego konta">
         </div>
         <div class="input-field col s12">
           <i class="material-icons prefix">email</i>
-          <input required id="edit_email" type="email" class="validate">
-          <label for="edit_email">Nowy adres e-mail</label>
+          <input required id="edit_email" type="email" class="validate" placeholder="Nowy adres">
         </div>
       </div>
     </div>
@@ -396,19 +395,17 @@
       <div class="row">
       	<div class="input-field col s12">
           <i class="material-icons prefix">lock_open</i>
-          <input required id="old_password" type="password" class="validate">
-          <label for="edit_email">Stare hasło</label>
+          <input required id="old_password" type="password" class="validate" placeholder="Stare hasło">
         </div>
         <div class="input-field col s12">
           <i class="material-icons prefix">lock</i>
-          <input required id="new_password" type="password" class="validate">
-          <label for="edit_email">Nowe hasło</label>
+          <input required id="new_password" type="password" class="validate" placeholder="Nowe hasło">
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
-      <a class="modal-close waves-effect waves-green btn-flat" onclick="changePassword()">Zapisz</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changePassword()">Zmień hasło</a>
     </div>
   </div>
   <div id="confirmDeleteAccount" class="modal bottom-sheet">
@@ -418,8 +415,7 @@
       <div class="row">
         <div class="input-field col s12">
           <i class="material-icons prefix">lock</i>
-          <input required id="delete_account_password" type="password" class="validate">
-          <label for="edit_email">Hasło</label>
+          <input required id="delete_account_password" type="password" class="validate" placeholder="Hasło do Twojego konta">
         </div>
       </div>
     </div>
