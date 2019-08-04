@@ -1,5 +1,5 @@
   window.onerror=function(){
-    M.toast({html:"<i class='material-icons'>error</i> Napotkano nieoczekiwany problem. Sprawdź logi konsoli."});
+    	M.toast({html:string_error});
   }
   var firebaseConfig = {
     apiKey: "AIzaSyBdK0boacor04eHtkpaOt-o21n-TISqBTw",
@@ -34,12 +34,12 @@ remove_script_host : false,
   }
         });
   function createChannel(){
-    console.group("Tworzenie konwersacji");
+    console.group(string_group_createChannel);
     firebase.database().ref("chan_count").once("value").then(function(snapshot){
       var name = $("#chan_name").val();
       var id=snapshot.val();
     if(name.length==0){
-  name="Konwersacja #"+id;
+  name=string_default_name+id;
   }
   var items = $(".userSelectorCheckbox");
   var perms = {};
@@ -57,10 +57,10 @@ remove_script_host : false,
     console.log(chanJson);
     firebase.database().ref("channels/"+id).set(chanJson).then(function(){
       firebase.database().ref("chan_count").set(id+1).then(function(){
-        M.toast({html:"Konwersacja została utworzona."});
+        M.toast({html:string_createChannel_success});
         openChannelSelector();
-        console.info("Zakończono powodzeniem.");
-        console.groupEnd("Tworzenie konwersacji");
+        console.log(string_createChannel_success);
+        console.groupEnd(string_group_createChannel);
       })
     })
     })
@@ -68,10 +68,11 @@ remove_script_host : false,
   function createChannelWindow(){
   	location.hash="create";
   	firebase.database().ref("users/"+firebase.auth().currentUser.uid+"/create").set(true);
-  	console.group("Okno tworzenia konwersacji");
+  	console.group(string_group_createChannelWindow);
   	$("#userSelector").html("");
     firebase.database().ref("users").once('value').then(function(snapshot){
       snapshot.forEach(function(childSnapshot) {
+      if(!childSnapshot.val().isDeleted){
       console.log(childSnapshot.val());
       var uid = childSnapshot.key;
       var nick = childSnapshot.val().actualNick;
@@ -79,16 +80,17 @@ remove_script_host : false,
       if(uid!=firebase.auth().currentUser.uid)
       	$("#userSelector:last-child").append('<tr><td><label><input type="checkbox" class="userSelectorCheckbox" id="'+uid+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+'</span></label></td></tr>');
       else
-      	$("#userSelector:last-child").append('<tr class="yellow accent-2"><td><label><input type="checkbox" checked="checked" disabled="disabled" class="userSelectorCheckbox" id="'+uid+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+' (Ty)</span></label></td></tr>');
+      	$("#userSelector:last-child").append('<tr class="yellow accent-2"><td><label><input type="checkbox" checked="checked" disabled="disabled" class="userSelectorCheckbox" id="'+uid+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+' '+string_you+'</span></label></td></tr>');
+  }
   });
-      console.info("Zakończono ładowanie listy użytkowników.");
-      console.groupEnd("Okno tworzenia konwersacji");
+      console.log(string_createChannelWindow_success);
+      console.groupEnd(string_group_createChannelWindow);
   })
 
 }
 function editChannelWindow(){
 	location.hash="edit";
-	console.group("Okno właściwości konwersacji");
+	console.group(string_group_editChannelWindow);
 	$("#chan_edit_name").val($("#title").html());
 	M.updateTextFields();
 	$("#userManager").html("");
@@ -102,43 +104,32 @@ function editChannelWindow(){
 				var avatar = snapshot.val().actualImage;
 			}
 			else{
-				var nick="<i>Wszyscy</i>";
+				var nick=string_everyone;
 				var avatar = "logo_small.png";
 			}
-				switch(user.val()){
-					case "ADMIN":
-						$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td><i class="material-icons">star</i> Administrator</td></tr>');
-						break;
-					case "MEMBER":
-						$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td><i class="material-icons">message</i> Członek</td></tr>');
-						break;
-					case "GUEST":
-						$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td><i class="material-icons">block</i> Wyciszony</td></tr>');
-						break;
-				}
-				
+				$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td>'+string_permission[user.val()]+'</td></tr>');
 			})
 		})
-		console.info("Załadowano informacje o uprawnieniach.");
-		console.groupEnd("Okno właściwości konwersacji");
+		console.log(string_editChannelWindow_success);
+		console.groupEnd(string_group_editChannelWindow);
 	})
 }
 function renameChannel(){
-	console.group("Zmiana nazwy kanału #"+channelId);
+	console.group(string_group_renameChannel+channelId);
 	var newName = $("#chan_edit_name").val();
-	console.log("Nowa nazwa: "+newName);
+	console.log(string_new_name+newName);
 	if(newName.length>0){
 		firebase.database().ref("channels/"+channelId+"/name").set(newName).then(function(){
-			M.toast({html:"Zmieniono nazwę kanału na: "+newName});
-			console.info("Zakończono powodzeniem.");
+			M.toast({html:string_renameChannel_success+newName});
+			console.log(string_renameChannel_success+newName);
 		})
 	}
-	console.groupEnd("Zmiana nazwy kanału #"+channelId);
+	console.groupEnd(string_group_renameChannel+channelId);
 }
   function openChannelSelector(){
   	location.hash="selector";
-  	console.group("Selektor konwersacji");
-    setTitle("Konwersacje");
+  	console.group(string_group_openChannelSelector);
+    setTitle(string_selector);
     adminOptions(false);
     $("#channelWindow").hide();
     $("#channelSelector").show();
@@ -153,32 +144,20 @@ function renameChannel(){
           permission = childSnapshot.val().permissions["EVERYONE"];
       	console.log(key+" ("+childName+"): "+permission);
         if(permission!=undefined){
-          var permText;
-          switch(permission){
-            case "ADMIN":
-              permText='<i class="small material-icons">star</i> Administrator';
-              break;
-            case "MEMBER":
-              permText='<i class="small material-icons">message</i> Członek';
-              break;
-            case "GUEST":
-              permText='<i class="small material-icons">block</i> Wyciszony';
-              break;
-          }
-          table.append("<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+permText+"</td></tr>");
+          table.append("<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+string_permission[permission]+"</td></tr>");
         }
       })
-      console.info("Wczytywanie dostępnych kanałów czatu powiodło się.");
-      console.groupEnd("Selektor konwersacji");
+      console.log(string_openChannelSelector_success);
+      console.groupEnd(string_group_openChannelSelector);
       discovery("create");
     })
   }
   function notifyRecivers(){
-  	  console.group("Wysyłanie powiadomień");
+  	  console.group(string_group_notifyReceivers);
 	  var senderNick = $("#nickname").text();
 	  var channelName = $("#title").text();
-	  console.log("Kanał: "+channelName);
-	  console.log("Nadawca: "+senderNick);
+	  console.log(string_conversation+channelName);
+	  console.log(string_sender+senderNick);
 	  var req = new XMLHttpRequest();
 req.open('POST', 'https://jschat.netlify.com/.netlify/functions/notifications', true);
 req.setRequestHeader("channelName", channelName);
@@ -187,17 +166,17 @@ req.setRequestHeader("channelId",channelId);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
      if(req.status == 200)
-      console.info(req.responseText);
+      console.log(req.responseText);
      else
       console.error(req.responseText);
-     console.groupEnd("Wysyłanie powiadomień");
+     console.groupEnd(string_group_notifyReceivers);
       count(firebase.auth().currentUser.uid,"sent_count");
   }
 };
 req.send(null);	  
   }
   function sendMessage(){
-  	console.group("Wysyłanie wiadomości");
+  	console.group(string_group_sendMessage);
     var content = tinyMCE.activeEditor.getContent();
     if(content.length>0){
     firebase.database().ref("channels/"+channelId+"/messages_count").once("value").then(function(snapshot){
@@ -210,68 +189,67 @@ req.send(null);
       console.log(messageJson);
       firebase.database().ref("channels/"+channelId+"/messages/"+mId).set(messageJson).then(function(){
         firebase.database().ref("channels/"+channelId+"/messages_count/").set(mId).then(function(){
-          M.toast({html:"Wiadomość została wysłana."});
+          M.toast({html:string_sendMessage_success});
           tinyMCE.activeEditor.setContent('');
-          console.log("Wysłano pomyślnie.");
-          console.groupEnd("Wysyłanie wiadomości");
+          console.log(string_sendMessage_success);
+          console.groupEnd(string_group_sendMessage);
           notifyRecivers();
         })
       })
     })
   }
   else{
-  	console.log("Próba wysłania pustej wiadomości została zablokowana.");
-    M.toast({html:"Nie wolno wysyłać pustych wiadomości.",classes:"yellow accent-2 red-text"});
-    console.groupEnd("Wysyłanie wiadomości");
+  	console.warn(string_sendMessage_empty);
+    M.toast({html:string_sendMessage_empty,classes:"yellow accent-2 red-text"});
+    console.groupEnd(string_group_sendMessage);
   }
   }
-  function count(uid,type){
-  	console.group("Aktualizacja statystyk");
+  function count(uid,type,amount=1){
+  	console.group(string_group_count);
     firebase.database().ref("users/"+uid).once("value").then(function(snapshot){
       var value = snapshot.val()[type];
       if(value==undefined)
-        value = 1;
+        value = amount;
       else
-        value++;
+        value+=amount;
       firebase.database().ref("users/"+uid+"/"+type).set(value).then(function(){
-      	console.log(`Zmieniono statystykę ${type} o 1 dla: ${uid}.`);
-    	console.groupEnd("Aktualizacja statystyk");
+      	console.log(`${string_count_success} ${uid}/${type} (+ ${amount}).`);
+    	console.groupEnd(string_group_count);
       })
     })
-    
   }
   var isAdmin = false;
   function adminOptions(show){
-  	console.group("Opcje administracyjne");
+  	console.group(string_group_adminOptions);
     if(show){
       $("#editChannelTrigger1").show();
       $("#editChannelTrigger2").show();
       isAdmin=true;
-      console.log("Pokazano opcje administracyjne");
+      console.log(string_adminOptions_show);
     }
     else{
       $("#editChannelTrigger1").hide();
       $("#editChannelTrigger2").hide();
       isAdmin=false;
-      console.log("Ukryto opcje administracyjne");
+      console.log(string_adminOptions_hide);
     }
-    console.groupEnd("Opcje administracyjne");
+    console.groupEnd(string_group_adminOptions);
   }
   function discovery(feature){
-  	console.group("Samouczek");
+  	console.group(string_group_discovery);
   	firebase.database().ref("users/"+firebase.auth().currentUser.uid+"/"+feature).once('value').then(function(snapshot){
   		if(!snapshot.val()){
-  			console.log(`Funkcja ${feature} nie została odkryta.`);
+  			console.log(string_discovery_not_discovered+feature);
   			$(`#${feature}`).tapTarget();
   			$(`#${feature}`).tapTarget('open');
   		}
   		else
-  			console.log(`Funkcja ${feature} została odkryta przez użytkownika.`);
-  		console.groupEnd("Samouczek");
+  			console.log(string_discovery_discovered);
+  		console.groupEnd(string_group_discovery);
   	})
   }
   function actionSend(show){
-  	console.group("Panel wysyłania wiadomości");
+  	console.group(string_group_actionSend);
     var sendDiv = $("#write");
     var readDiv = $("#messages");
     if(allowEditing&&show&&sendDiv.is(":hidden")){
@@ -279,26 +257,26 @@ req.send(null);
   	firebase.database().ref("users/"+firebase.auth().currentUser.uid+"/sendPanel").set(true);
       sendDiv.show();
       readDiv.height("50vh");
-      console.log("Pokazano panel wysyłania wiadomości.");
+      console.log(string_actionSend_show);
       location.hash="send";
       scrollToBottom();
     }
     else{
       sendDiv.hide();
       readDiv.height("100%");
-      console.log("Ukryto panel wysyłania wiadomości.");
+      console.log(string_actionSend_hide);
       location.hash="messages";
       scrollToBottom();
     }
-    console.groupEnd("Panel wysyłania wiadomości");
+    console.groupEnd(string_group_actionSend);
   }
   var allowEditing = false;
   function checkPerms(snapshot){
-  	console.group("Sprawdzanie uprawnień");
+  	console.group(string_group_checkPerms);
     var permission = snapshot[firebase.auth().currentUser.uid];
         if(permission===undefined)
           permission = snapshot["EVERYONE"];
-        console.log("Twoje uprawnienia: "+permission);
+        console.log(string_your_permissions+permission);
         switch(permission){
           case "ADMIN":
             adminOptions(true);
@@ -316,46 +294,46 @@ req.send(null);
             $("#openSend").hide();
             break;
            default:
-           M.toast({html:"Nie masz dostępu do tej konwersacji."});
+           M.toast({html:string_access_denied});
           openChannelSelector();
           metaRef.off();
           messagesRef.off();
           break;
         }
-        console.groupEnd("Sprawdzanie uprawnień");
+        console.groupEnd(string_group_checkPerms);
   }
   function scrollToBottom(){
-  	console.group("Przewijanie");
+  	console.group(string_group_scrollToBottom);
     var div = $("#messages");
-    console.log("Wysokość do przewijania: "+div[0].scrollHeight);
+    console.log(string_scrollToBottom_messages+div[0].scrollHeight+" px.");
     div.scrollTop(div.scrollHeight);
-    console.log("Wysokość do przewijania okna: "+document.body.scrollHeight);
+    console.log(string_scrollToBottom_body+document.body.scrollHeight+ "px.");
     window.scrollTo(0,document.body.scrollHeight);
-    console.groupEnd("Przewijanie");
+    console.groupEnd(string_group_scrollToBottom);
   }
   function timeAgo(time){
-  	console.group("jsCHAT time check");
+  	console.group(string_group_timeAgo);
     var output= "";
     var difference=(Date.now()-time);
-        var sec = Math.floor(difference/1000)//+" sekund temu.";
-        var min = Math.floor(sec/60)//+" minut temu.";
-        var hour = Math.floor(min/60)//+" godzin temu.";
+        var sec = Math.floor(difference/1000);
+        var min = Math.floor(sec/60);
+        var hour = Math.floor(min/60);
         if(sec<60)
-          output+="przed chwilą";
+          output+=string_just_now;
         else if(min<60)
-          output+=min+" minut(y) temu";
+          output+=min+string_minutes_ago
         else if(hour<24)
-          output+=hour+" godzin(y) temu";
+          output+=hour+string_hours_ago;
         else
           output+=new Date(time).toLocaleString();
     console.log(output);
-    console.groupEnd("jsCHAT time check");
+    console.groupEnd(string_group_timeAgo);
     return output;
   }
   
   function ranking(){
   	location.hash="ranking";
-  	console.group("Ranking");
+  	console.group(string_group_ranking);
     var table = $("#rankingBody");
     table.html("");
     firebase.database().ref("users").once("value").then(function(snapshot){
@@ -369,7 +347,7 @@ req.send(null);
       });
       var pos = 1;
       usersRanking.forEach(function(entry){
-      	console.log(`${pos}.: ${entry[0]}`)
+      	console.log(`${pos}.: ${entry[0]}`);
         if(entry[0]==firebase.auth().currentUser.displayName){
           myPosition=pos;
         }
@@ -378,7 +356,7 @@ req.send(null);
         	pos++;
         }
       })
-      console.groupEnd("Ranking");
+      console.groupEnd(string_group_ranking);
       $("#ranking1").text(myPosition);
       $("#ranking2").text(myPosition);
       $("#rank"+myPosition).addClass("yellow accent-2");
@@ -390,7 +368,7 @@ req.send(null);
     })
   }
   function getUserInfo(uid){
-  	console.group("Profil użytkownika");
+  	console.group(string_group_getUserInfo);
   	location.hash="user";
     var nickField = $("#userInfoNick");
     var activityField = $("#userInfoActivity");
@@ -404,103 +382,85 @@ req.send(null);
       console.log(snapshot.val());
       nickField.html(snapshot.val().actualNick);
       avatarField.attr("src",snapshot.val().actualImage);
-      reputationField.html("Reputacja: "+snapshot.val().points);
+      reputationField.html(string_reputation+snapshot.val().points);
       uidField.html(uid);
       if(snapshot.val().sent_count)
-        sentCountField.html("Wysłanych wiadomości: "+snapshot.val().sent_count);
+        sentCountField.html(string_sent_count+snapshot.val().sent_count);
       else
-      	sentCountField.html("Wysłanych wiadomości: 0");
+      	sentCountField.html("");
       if(snapshot.val().deleted_count)
-        deletedSelfCountField.html("Usuniętych: "+snapshot.val().deleted_count);
+        deletedSelfCountField.html(string_deleted_count+snapshot.val().deleted_count);
       else
-      	deletedSelfCountField.html("Usuniętych: 0");
+      	deletedSelfCountField.html("");
       if(snapshot.val().connections){
-        activityField.html("<span class='green-text'>Aktywny teraz</span>");
+        activityField.html(string_user_online);
       }
       else{
-        activityField.html("Ostatnio był aktywny: ");
-        activityField.html(timeAgo(snapshot.val().lastOnline));
+        activityField.html(string_user_offline+timeAgo(snapshot.val().lastOnline));
       }
-   	  console.groupEnd("Profil użytkownika");
+   	  console.groupEnd(string_group_getUserInfo);
     })
 	else{
-		console.log("WSZYSCY");
-		nickField.html("<i>Wszyscy</i>");
-		activityField.html("(obecni i nowi)");
+		console.log(uid);
+		nickField.html(string_everyone);
+		activityField.html(string_everyone_info);
 		avatarField.attr("src","logo_small.png");
-		uidField.html("EVERYONE");
-		reputationField.html("Reputacja: &infin;");
+		uidField.html(uid);
+		reputationField.html(string_reputation+"&infin;");
 		sentCountField.html("");
 		deletedSelfCountField.html("");
-		console.groupEnd("Profil użytkownika")
+		console.groupEnd(string_group_getUserInfo);
 	}
   }
   function getAuthorData(msgId,message){
-  	console.group("Informacje o wiadomości");
+  	console.group(string_group_getAuthorData);
     firebase.database().ref("users/"+message.author).once("value").then(function(snapshot){
     	console.log(snapshot.val());
-    	try{
-    		if(!snapshot.val().actualNick)
-    			throw Error;
+    	if(!snapshot.val().isDeleted){
 			$("#info"+msgId).html("<a class='modal-trigger grey-text' href='#userInfo'><img class='circle avatar' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time));
 			$("#info"+msgId).click(function(){
 				getUserInfo(message.author);
 			})
-		}catch(Error){
-      		$("#info"+msgId).html("<a class='grey-text'>"+"<i>Konto usunięte</i>"+"</a> &diams; "+timeAgo(message.time));
-      	}
+		}
+		else
+      		$("#info"+msgId).html("<a class='grey-text'>"+string_account_deleted+"</a> &diams; "+timeAgo(message.time));
       	scrollToBottom();
-      	console.groupEnd("Informacje o wiadomości");
+      	console.groupEnd(string_group_getAuthorData);
     })
-  }
-  function givePoints(uid,amount){
-  	console.group("Reputacja");
-    firebase.database().ref("users/"+uid+"/points").once("value").then(function(snapshot){
-    	if(snapshot.val()!=undefined){
-    	console.log(`Użytkownik ${uid} miał ${snapshot.val()} punktów.`);
-      	var newBalance = snapshot.val()+amount;
-      	firebase.database().ref("users/"+uid+"/points").set(newBalance).then(function(snapshot){
-      		console.log(`Przyznano ${amount} punktów użytkownikowi ${uid}. Ma teraz ${newBalance} punktów.`);
-      	})
-      }
-      else
-      	console.log(`Użytkownik ${uid} nie istnieje.`);
-    })
-    console.groupEnd("Reputacja");
   }
   function sendVote(type,id,uid){
-  	console.group("Reakcje");
+  	console.group(string_group_sendVote);
   	$("#upvote").attr("disabled",true);
   	$("#downvote").attr("disabled",true);
   	$("#voteBack").attr("disabled",true);
-  	console.log(`Reakcja ${type} na wiadomość ${id} użytkownika ${uid}.`);
+  	console.log(`${string_group_sendVote} ${type}: ${uid} / ${id}`);
     if(type!=0)
       firebase.database().ref("channels/"+channelId+"/messages/"+id+"/votes/"+firebase.auth().currentUser.uid).set(type).then(function(){
-        M.toast({html:"Twój głos został przesłany."});
-        givePoints(uid,type*5);
+        M.toast({html:string_sendVote_success});
+        count(uid,"points",type*5);
         contextMenu(id,uid);
-        console.groupEnd("Reakcje");
+        console.groupEnd(string_group_sendVote);
       });
     else
       firebase.database().ref("channels/"+channelId+"/messages/"+id+"/votes/"+firebase.auth().currentUser.uid).remove().then(function(){
-        M.toast({html:"Twój głos został usunięty."});
+        M.toast({html:string_sendVote_removed});
         contextMenu(id,uid);
-        console.groupEnd("Reakcje");
+        console.groupEnd(string_group_sendVote);
       });
   }
   var previousMessage;
   function undo(id){
-  	console.group("Cofanie usuwania wiadomości");
+  	console.group(string_group_undo);
     M.Toast.dismissAll();
     firebase.database().ref("channels/"+channelId+"/messages/"+id).update(previousMessage);
       firebase.database().ref("users/"+previousMessage.author+"/deleted_count").once("value").then(function(snapshot){
         firebase.database().ref("users/"+previousMessage.author+"/deleted_count").set(snapshot.val()-1);
-        console.log(`Wiadomość #${id} wróciła na swoje miejsce.`);
-        console.groupEnd("Cofanie usuwania wiadomości");
+        console.log(string_undo_success);
+        console.groupEnd(string_group_undo);
       })
   }
   function removeMessage(id){
-  	console.group("Usuwanie wiadomości");
+  	console.group(string_group_removeMessage);
     M.Toast.dismissAll();
     firebase.database().ref("channels/"+channelId+"/messages/"+id).once("value").then(function(snapshot){
       previousMessage = snapshot.val();
@@ -511,9 +471,9 @@ req.send(null);
               firebase.database().ref("users/"+previousMessage.author+"/deleted_count").set(snapshot.val()+1);
             else
               firebase.database().ref("users/"+previousMessage.author+"/deleted_count").set(1);
-          	console.log("Usunięto wiadomość #"+id);
-          	console.groupEnd("Usuwanie wiadomości");
-            M.toast({html:"Usunięto wiadomość. <button class='btn-flat toast-action' onclick='undo("+id+",false)'>Cofnij</button>"});
+          	console.log(string_removeMessage_success+id);
+          	console.groupEnd(string_group_removeMessage);
+            M.toast({html:string_removeMessage_success+id+" <button class='btn-flat toast-action' onclick='undo("+id+",false)'>"+string_undo+"</button>"});
           })
         })
     })
@@ -552,11 +512,11 @@ req.send(null);
             undoVoteButton.attr("disabled",false);
             if(vote.val()==1){
               myVoteStatus.html("Zareagowałeś pozytywnie.");
-              undoVoteButton.click(function(){sendVote(0,id,owner);givePoints(owner,-5);});
+              undoVoteButton.click(function(){sendVote(0,id,owner);count(owner,"points",-5);});
             }
             if(vote.val()==-1){
               myVoteStatus.html("Zareagowałeś negatywnie");
-              undoVoteButton.click(function(){sendVote(0,id,owner);givePoints(owner,5);});
+              undoVoteButton.click(function(){sendVote(0,id,owner);count(owner,"points",5)});
             }
           }
         })

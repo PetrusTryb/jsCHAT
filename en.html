@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>jsCHAT</title>
+  <meta name="description" content="jsCHAT - the only one chat!">
+  <meta name="keywords" content="jsCHAT, czat, chat, social, only one right, js, messenger, talk, write">
+  <meta charset="utf-8">
+  <link rel="manifest" href="https://jschat.netlify.com/manifest.json">
+  <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha384-5KZdSYqynSzIjQGS2M1O3HW6HVDBjfNx0v5Y2eQuE3vvQ9NTiiPK9/GWc0yYCrgw" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" type="text/css" href="https://jschat.netlify.com/style.css">
+<script
+  src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+  integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+  crossorigin="anonymous"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" integrity="sha384-ZOED+d9HxogEQwD+jFvux96iGQR9TxfJO+mPF2ZS0TuKH6eWrmvPsDpO6I0OWdiX" crossorigin="anonymous"></script>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" type="image/png" href="https://jschat.netlify.com/logo.png"/>
+</head>
+<body>
+  <div id="loader">
+      <a class="btn-floating pulse yellow accent-2"><i class="material-icons black-text">hourglass_full</i></a>
+    <p id="loadingStatus"> Please wait...</p>
+  </div>
+
+  <div id="unlogged" class="hidden">
+  <p class="center flow-text"><img src="logo.png" class="logo" title="jsCHAT&#13;Jedyny słuszny komunikator">Welcome to The Only Right Chat!</p>
+  <p class="center">You must be logged in to use this app.</p>
+  <ul class="collapsible">
+    <li class="active">
+      <div class="collapsible-header lime accent-3"><i class="material-icons">account_circle</i>Sign in</div>
+      <div class="collapsible-body"><div class="row">
+      <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="login_email" type="email" class="validate" placeholder="E-mail address">
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="login_password" type="password" class="validate" placeholder="Password">
+        </div>
+      </div>
+      <button class="btn right waves-effect" onclick="login()"><i class="material-icons">check</i> Login</button>
+      
+    </div>
+  </div>
+  </div>
+    </li>
+    <li>
+      <div class="collapsible-header blue accent-2"><i class="material-icons">person_add</i>Sign up</div>
+      <div class="collapsible-body"><div class="row">
+    <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">perm_identity</i>
+          <input required id="nick" type="text" class="validate" placeholder="Nick">
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="email" type="email" class="validate" placeholder="E-mail address">
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="password" type="password" class="validate" placeholder="Password">
+        </div>
+      </div>
+      <button class="btn right waves-effect" onclick="register()"><i class="material-icons">check</i> Register</button>
+      
+    </div>
+  </div></div>
+    </li>
+    <li>
+      <div class="collapsible-header yellow accent-2"><i class="material-icons">security</i>Password recovery</div>
+      <div class="collapsible-body"><div class="row">
+      <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="recovery_email" type="email" class="validate" placeholder="E-mail address">
+        </div>
+      </div>
+      <button class="btn right waves-effect" onclick="password_reset()"><i class="material-icons">check</i> Send recovery e-mail</button>
+    </div>
+  </div>
+  </div>
+    </li>
+  </ul>
+  <footer class="page-footer green darken-4">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">jsCHAT</h5>
+                <p class="grey-text text-lighten-4">The Only Right Chat</p>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="https://github.com/PetrusTryb/jsCHAT/" target="_blank">Source code</a></li>
+                  <li><a class="grey-text text-lighten-3" href="https://github.com/PetrusTryb/jsCHAT/issues" target="_blank">Report a bug</a></li>
+                  <li><a class="grey-text text-lighten-3" href="https://gamerhash.com/pl/ref/19EzBG3a" target="_blank">Earn money with your PC!</a></li>
+                  <li><a class="grey-text text-lighten-3" href="javascript:location.reload(true)">Refresh</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © Piotr Trybisz 2019 - &infin;
+            <a class="grey-text text-lighten-4 right" href="https://piotr-trybisz.000webhostapp.com/" target="_blank">About me</a>
+            </div>
+          </div>
+        </footer>
+  </div>
+  <div id="logged" class="hidden">
+    <ul id="dropdownAccount" class="dropdown-content">
+  <li><a onclick="settings()" class="modal-trigger" href="#settings">Settings</a></li>
+  <li><a onclick="logOut()">Logout</a></li>
+</ul>
+    <nav>
+    <div class="nav-wrapper blue accent-2">
+      <a class="brand-logo"><img src="logo.png" class="small_logo" title="jsCHAT&#13;The Only Right Chat"> <span id="title" class="flow-text"></span></a>
+
+      <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+      <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". place" id="ranking1"></span></a></li>
+      <li id="editChannelTrigger1" class="hidden"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Conversation preferences</a></li>
+      <li><a class="dropdown-trigger" data-target="dropdownAccount">My account<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <ul class="sidenav" id="mobile-nav">
+    <li><div class="user-view">
+      <div class="background teal">
+        
+      </div>
+      <a><img class="circle" id="avatar"></a>
+      <a><span class="white-text name" id="nickname"></span></a>
+      <a><span class="white-text email" id="userEmail"></span></a>
+    </div></li>
+    <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". place" id="ranking2"></span></a></li>
+    <li id="editChannelTrigger2" class="hidden"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Conversation preferences</a></li>
+    <li><div class="divider"></div></li>
+    <li><a onclick="settings()" class="modal-trigger" href="#settings">Settings</a></li>
+    <li><a onclick="logOut()">Logout</a></li>
+  </ul>
+  </ul>
+  <div id="channelSelector">
+    <div class="fixed-action-btn">
+  <a class="btn-floating btn-large green darken-4 modal-trigger" id="openCreate" href="#createChannel" onclick="createChannelWindow()">
+    <i class="large material-icons">add</i>
+  </a>
+  <div class="tap-target yellow accent-2" data-target="openCreate" id="create">
+    <div class="tap-target-content">
+      <h5>Do you want to start new conversation?</h5>
+      <p>Click this button to invite people to chat!</p>
+    </div>
+  </div>
+</div>
+    <table class="centered highlight">
+        <thead class="lime accent-3">
+          <tr>
+              <th>Name</th>
+              <th>Your rank</th>
+          </tr>
+        </thead>
+
+        <tbody id="channelSelectorBody">
+          
+        </tbody>
+      </table>
+  </div>
+  <div id="channelWindow" class="hidden">
+    <div id="messages">
+        <div class="progress"><div class="indeterminate"></div></div>
+    </div>
+    <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" onclick="actionSend(true);"><i class="large material-icons">add_comment</i></a></div>
+    <div class="tap-target yellow accent-2" data-target="openSend" id="sendPanel">
+    <div class="tap-target-content">
+      <h5>To write a message,</h5>
+      <p>click this button. You can use advanced text formatting.</p>
+    </div>
+  </div>
+    <div id="write" class="hidden">
+      <textarea id="textedit"></textarea>
+      <button class="btn waves-effect waves-dark yellow accent-2 black-text full-width" onclick="sendMessage()">Send
+    <i class="material-icons right">send</i>
+  </button>
+    </div>
+  </div>
+  </div>
+
+  <!-- Modal Structure -->
+  <div id="createChannel" class="modal modal-fixed-footer modal-fullscreen">
+    <div class="modal-content">
+      <h4>Creating new conversation</h4>
+      <div class="row">
+        <div class="input-field col s12">
+
+          <i class="material-icons prefix">edit_mode</i>
+          <input required id="chan_name" type="text" class="validate">
+          <label for="chan_name">Name</label>
+        </div>
+        <table>
+        <thead>
+          <caption>Select one or more users:</caption>
+        </thead>
+        <tbody id="userSelector">
+
+        </tbody>
+      </table>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="createChannel()">Create</a>
+    </div>
+  </div>
+  <div id="editChannel" class="modal modal-fullscreen modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Conversation preferences</h4>
+      <div class="row">
+        <div class="input-field col s9">
+
+          <i class="material-icons prefix">edit_mode</i>
+          <input required id="chan_edit_name" type="text" class="validate">
+          <label for="chan_name">Name</label>
+        </div>
+        <div class="col s3">
+          <button class="btn waves-effect yellow accent-2 black-text" onclick="renameChannel()">Change name</button>
+        </div>
+        </div>
+        <table>
+        <thead>
+          <caption>Members (click to manage):</caption>
+          <tr>
+            <th>User</th>
+            <th>Rank</th>
+          </tr>
+        </thead>
+        <tbody id="userManager">
+
+        </tbody>
+      </table>
+      
+
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-grey btn-flat">Close</a>
+    </div>
+  </div>
+  <div id="userInfo" class="modal bottom-sheet">
+    <div class="modal-content">
+      <img id="userInfoAvatar" class="circle small_logo"><span id="userInfoNick"></span>
+      <p id="userInfoActivity"></p>
+      <p id="userInfoReputation"></p>
+      <p id="userInfoSent"></p>
+      <p id="userInfoSelfDeleted"></p>
+      <p id="userInfoAdminDeleted"></p>
+      <p id="userInfoUid" class="grey-text"></p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-teal btn-flat">Close</a>
+    </div>
+  </div>
+  <div id="messageActions" class="modal bottom-sheet">
+    <div class="modal-content">
+      <button class="btn green waves-effect modal-close" id="upvote"><i class="material-icons">thumb_up</i></button>
+      <span id="votes"></span>
+      <button class="btn orange waves-effect modal-close" id="downvote"><i class="material-icons">thumb_down</i></button>
+      <p id="yourVote"></p>
+      <button class="btn waves-effect btn-flat grey modal-close" id="voteBack"><i class="material-icons">undo</i> Undo</button>
+      <br/><br/>
+      <button class="btn waves-effect btn-flat red modal-close" id="deleteMessage"><i class="material-icons">delete</i> Delete for everyone</button>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-teal btn-flat">Close</a>
+    </div>
+  </div>
+  <div id="ranking" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Ranking</h4>
+      <table class="centered highlight">
+        <thead>
+          <tr>
+              <th>Position</th>
+              <th>Nick</th>
+              <th>Reputation</th>
+          </tr>
+        </thead>
+
+        <tbody id="rankingBody">
+          
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect btn-flat">Close</a>
+    </div>
+  </div>
+  <div id="settings" class="modal modal-fixed-footer modal-fullscreen">
+    <div class="modal-content">
+      <h4>Settings</h4>
+    <p>Nick: <span id="settingsNick"></span><a class="btn-flat blue-text modal-trigger" href="#editNick"><i class="material-icons left">edit</i></a></p>
+    <p>Avatar: <br/><img id="settingsAvatar" class="circle small_logo" /><a class="btn-flat blue-text modal-trigger" href="#uploadAvatar"><i class="material-icons left">cloud_upload</i></a><a class="btn-flat red-text modal-trigger" href="#resetAvatar"><i class="material-icons left">clear</i></a></p>
+    <p>E-mail address: <span id="settingsEmail"></span><a class="btn-flat blue-text modal-trigger" href="#editEmail"><i class="material-icons left">edit</i></a></p>
+    <a class="btn blue modal-trigger" href="#changePassword"><i class="material-icons left">lock</i> Change password</a><a class="btn red modal-trigger" href="#confirmDeleteAccount"><i class="material-icons left">delete</i> Delete my account</a>
+    </div>
+    
+    <div class="modal-footer">
+      <a class="waves-effect waves-teal btn-flat modal-trigger" href="#userInfo" onclick="getMyInfo()">Profile preview</a>
+      <a class="modal-close waves-effect waves-grey btn-flat">Close</a>
+    </div>
+  </div>
+  <div id="editNick" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Change nick</h4>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">perm_identity</i>
+          <input required id="edit_nick" type="text" class="validate">
+          <label for="edit_nick">New nick</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changeNick()">OK</a>
+    </div>
+  </div>
+  <div id="editEmail" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Change e-mail</h4>
+      <div class="row">
+        <p>For security reasons, you must enter your password</p>
+      	<div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="edit_email_password" type="password" class="validate" placeholder="Your password">
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">email</i>
+          <input required id="edit_email" type="email" class="validate" placeholder="New e-mail address">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changeEmail()">OK</a>
+    </div>
+  </div>
+  <div id="uploadAvatar" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Change avatar</h4>
+      <div class="file-field input-field">
+      <div class="btn">
+        <span><i class="material-icons">cloud_upload</i> Upload an image</span>
+        <input type="file" id="upload_avatar">
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text" placeholder="File not selected.">
+      </div>
+    </div>
+    <div class="progress">
+      <div class="determinate" id="upload_avatar_progress"></div>
+  </div>
+  <p id="upload_avatar_state"></p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="waves-effect waves-green btn-flat" onclick="changeAvatar()">Upload</a>
+    </div>
+  </div>
+  <div id="resetAvatar" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Do you want to reset your avatar?</h4>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-grey btn-flat">No</a>
+      <a class="waves-effect waves-orange btn-flat" onclick="resetAvatar()">Yes</a>
+    </div>
+  </div>
+  <div id="changePassword" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Change password</h4>
+      <div class="row">
+      	<div class="input-field col s12">
+          <i class="material-icons prefix">lock_open</i>
+          <input required id="old_password" type="password" class="validate" placeholder="Old password">
+        </div>
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="new_password" type="password" class="validate" placeholder="New password">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="modal-close waves-effect waves-green btn-flat" onclick="changePassword()">OK</a>
+    </div>
+  </div>
+  <div id="confirmDeleteAccount" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Account removal</h4>
+      <p class="red-text">This will delete your account permanently!</p>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">lock</i>
+          <input required id="delete_account_password" type="password" class="validate" placeholder="Confirm your password">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="modal-close waves-effect waves-green btn-flat red-text" onclick="deleteAccount()">Delete my account</a>
+    </div>
+  </div>
+</body>
+
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.2/firebase-messaging.js"></script>
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#config-web-app -->
+<script src="https://cdn.tiny.cloud/1/6hqbfqbkupp38gqwmij0rn6amr3ozohz3wcsdi5wb8tfdrok/tinymce/5/tinymce.min.js"></script>
+<script src="main.js"></script>
+</html>
