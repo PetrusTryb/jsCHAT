@@ -107,7 +107,7 @@ function editChannelWindow(){
 				var nick=string_everyone;
 				var avatar = "logo_small.png";
 			}
-				$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+'</td><td>'+string_permission[user.val()]+'</td></tr>');
+				$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+''+string_permissions[user.val()]+'</td></tr>');
 			})
 		})
 		console.log(string_editChannelWindow_success);
@@ -367,7 +367,7 @@ req.send(null);
     }catch(Error){}
     })
   }
-  function getUserInfo(uid){
+  function getUserInfo(uid,showPermissions=true){
   	console.group(string_group_getUserInfo);
   	location.hash="user";
     var nickField = $("#userInfoNick");
@@ -411,6 +411,30 @@ req.send(null);
 		deletedSelfCountField.html("");
 		console.groupEnd(string_group_getUserInfo);
 	}
+	if(showPermissions){
+	firebase.database().ref("channels/"+channelId+"/permissions/").once("value").then(function(snapshot){
+		var perm = snapshot.val()[uid];
+		if(!perm)
+			perm=snapshot.val()["EVERYONE"];
+		nickField.append(string_permissions[perm]);
+		if(isAdmin){
+		$("#changeRankButton").show();
+		$("#changeRankButton").click(function(){
+			changeRankWindow(uid,perm);
+		});
+	}
+	else{
+		$("#changeRankButton").hide();
+	}
+	});
+	}
+  }
+  function changeRankWindow(uid,currentPermission){
+  	console.group(string_group_changeRankWindow);
+  	console.log(`${uid}: ${currentPermission}`);
+  	$("input[value="+currentPermission+"]").prop("checked",true);
+  	$("#changeRankNick").html($("#userInfoNick").html());
+  	console.groupEnd(string_group_changeRankWindow);
   }
   function getAuthorData(msgId,message){
   	console.group(string_group_getAuthorData);

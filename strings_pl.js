@@ -12,6 +12,11 @@ const string_permission = {
 "MEMBER" : "<i class='material-icons'>message</i> Członek",
 "GUEST" : "<i class='material-icons'>block</i> Wyciszony"
 };
+const string_permissions = {
+	"ADMIN": " - <i>administrator</i>",
+	"MEMBER": " - <i>członek</i>",
+	"GUEST": " - <i>wyciszony</i>"
+};
 const string_editChannelWindow_success = "Załadowano informacje o uprawnieniach.";
 const string_group_renameChannel = "Zmiana nazwy konwersacji #";
 const string_new_name = "Nowa nazwa: ";
@@ -103,3 +108,4 @@ const string_group_login = "Logowanie";
 const string_group_logOut = "Wylogowywanie";
 const string_group_password_reset = "Odzyskiwanie hasła";
 const string_password_reset_success = "Wysłano instrukcje odzyskiwania na adres: ";
+const string_group_changeRankWindow = "Okno zmiany rangi użytkownika";

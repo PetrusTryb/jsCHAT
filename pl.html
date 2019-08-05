@@ -9,7 +9,7 @@
   <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" integrity="sha384-5KZdSYqynSzIjQGS2M1O3HW6HVDBjfNx0v5Y2eQuE3vvQ9NTiiPK9/GWc0yYCrgw" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" type="text/css" href="https://jschat.netlify.com/style.css">
+<link rel="stylesheet" type="text/css" href="style.css">
 <script
   src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
   integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
@@ -242,11 +242,7 @@
         </div>
         <table>
         <thead>
-          <caption>Członkowie (kliknij osobę, aby zobaczyć profil):</caption>
-          <tr>
-            <th>Użytkownik</th>
-            <th>Uprawnienia</th>
-          </tr>
+          <caption>Członkowie</caption>
         </thead>
         <tbody id="userManager">
 
@@ -259,9 +255,9 @@
       <a class="modal-close waves-effect waves-grey btn-flat">Zamknij</a>
     </div>
   </div>
-  <div id="userInfo" class="modal bottom-sheet">
+  <div id="userInfo" class="modal bottom-sheet modal-fixed-footer">
     <div class="modal-content">
-      <img id="userInfoAvatar" class="circle small_logo"><span id="userInfoNick"></span>
+      <img id="userInfoAvatar" class="circle small_logo"><span id="userInfoNick" class="flow-text"></span>
       <p id="userInfoActivity"></p>
       <p id="userInfoReputation"></p>
       <p id="userInfoSent"></p>
@@ -270,7 +266,37 @@
       <p id="userInfoUid" class="grey-text"></p>
     </div>
     <div class="modal-footer">
-      <a class="modal-close waves-effect waves-teal btn-flat">Zamknij</a>
+      <a class="waves-effect waves-yellow btn-flat modal-trigger" href="#changeRank" id="changeRankButton">Zmień rangę</a>
+      <a class="modal-close waves-effect waves-red btn-flat">Wyrzuć</a>
+      <a class="modal-close waves-effect waves-grey btn-flat">Zamknij</a>
+    </div>
+  </div>
+  <div id="changeRank" class="modal bottom-sheet modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Zmiana rangi</h4>
+      <p id="changeRankNick" class="flow-text"></p>
+      <p>
+      <label>
+        <input class="with-gap" name="rank" type="radio" value="ADMIN"/>
+        <span class="black-text"><i class='material-icons'>star</i> Administrator</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input class="with-gap" name="rank" type="radio" value="MEMBER" />
+        <span class="black-text"><i class='material-icons'>message</i> Członek</span>
+      </label>
+    </p>
+    <p>
+      <label>
+        <input class="with-gap" name="rank" type="radio"  value="GUEST" />
+        <span class="black-text"><i class='material-icons'>block</i> Wyciszony</span>
+      </label>
+    </p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat">Zapisz</a>
     </div>
   </div>
   <div id="messageActions" class="modal bottom-sheet">
