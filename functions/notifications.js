@@ -16,11 +16,11 @@ exports.handler = function(event, context, callback) {
 		if(token!=null){
 		var message = {
     "to": token,
-			"collapse_key": "Nowe wiadomości: "+channelName,
+			"collapse_key": channelName,
 			"priority": "high",
     "notification": {
       "title": channelName,
-      "body": "Nowa wiadomość od: "+senderNick,
+      "body": senderNick,
       "click_action":"https://jschat.netlify.com/",
 			"icon": "https://jschat.netlify.com/logo_small.png"
       }}

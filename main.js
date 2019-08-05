@@ -479,7 +479,7 @@ req.send(null);
     })
   }
   function contextMenu(id,owner){
-  	console.group("Opcje wiadomości");
+  	console.group(string_group_contextMenu);
   	location.hash="context";
     var instance = M.Modal.getInstance($("#messageActions"));
     var votesCount = $("#votes");
@@ -499,7 +499,7 @@ req.send(null);
       if(owner==firebase.auth().currentUser.uid){
           upvoteButton.attr("disabled",true);
           downvoteButton.attr("disabled",true);
-          myVoteStatus.html("Nie możesz reagować na własne wiadomości.");
+          myVoteStatus.html(string_no_voting_for_self);
         }
       if(snapshot.val()){
         var votes = 0;
@@ -511,11 +511,11 @@ req.send(null);
             undoVoteButton.show();
             undoVoteButton.attr("disabled",false);
             if(vote.val()==1){
-              myVoteStatus.html("Zareagowałeś pozytywnie.");
+              myVoteStatus.html(string_reaction_positive);
               undoVoteButton.click(function(){sendVote(0,id,owner);count(owner,"points",-5);});
             }
             if(vote.val()==-1){
-              myVoteStatus.html("Zareagowałeś negatywnie");
+              myVoteStatus.html(string_reaction_negative);
               undoVoteButton.click(function(){sendVote(0,id,owner);count(owner,"points",5)});
             }
           }
@@ -526,7 +526,7 @@ req.send(null);
         votesCount.text("0");
       }
       instance.open();
-      console.groupEnd("Opcje wiadomości");
+      console.groupEnd(string_group_contextMenu);
     })
     removeButton.onclick=function(){removeMessage(id);};
     if(isAdmin||owner==firebase.auth().currentUser.uid){
@@ -538,7 +538,7 @@ req.send(null);
     event.preventDefault();
   }
   function autoUpdate(snapshot){
-  	console.group("Aktualizacja wiadomości");
+  	console.group(string_group_autoUpdate);
     var messagesDiv = $("#messages");
     messagesDiv.html("");
     if(snapshot.val()!=null)
@@ -547,7 +547,7 @@ req.send(null);
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.append("<div class='my yellow accent-2' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>Ty</a> &diams; "+timeAgo(message.time)+"</p></div>");
+        messagesDiv.append("<div class='my yellow accent-2' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
       }
       else{
         messagesDiv.append("<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>");
@@ -555,8 +555,8 @@ req.send(null);
       }
     })
 	else
-		messagesDiv.html("<p class='center'>Ta konwersacja jest pusta...</p>");
-      console.groupEnd("Aktualizacja wiadomości");
+		messagesDiv.html(string_empty_conversation);
+      console.groupEnd(string_group_autoUpdate);
   }
   window.onhashchange = function() {
  switch(location.hash){
@@ -565,12 +565,11 @@ req.send(null);
  			joinChannel(channelId);
  		break;
  	case "#selector":
- 		setTitle("Konwersacje");
+ 		setTitle(string_selector);
  		if(messagesRef){
  		messagesRef.off();
     	metaRef.off();
     	}
-    //clearInterval(refreshInterval);
  		openChannelSelector();
  		break;
  }
@@ -579,7 +578,7 @@ req.send(null);
   var refreshInterval;
   var lastSnapshot;
   function joinChannel(id){
-  	console.group("Dołączanie do konwersacji");
+  	console.group(string_group_joinChannel);
   	discovery("sendPanel");
   	$("#messages").html('<div class="progress"><div class="indeterminate"></div></div>');
     $("#channelWindow").show();
@@ -592,39 +591,37 @@ req.send(null);
     metaRef.on('value', function(snapshot) {
       setTitle(snapshot.val().name);
       checkPerms(snapshot.val().permissions);
-       //autoUpdate(snapshot.val().messages);
 });
     messagesRef.on('value', function(snapshot) {
       lastSnapshot = snapshot;
        autoUpdate(snapshot);
 });
-    console.log("Dołączono do konwersacji: "+id);
-    //refreshInterval = setInterval(autoUpdate(lastSnapshot),60000);
-    console.groupEnd("Dołączanie do konwersacji");
+    console.log(string_joinChannel_success+id);
+    console.groupEnd(string_group_joinChannel);
   }
   function setTitle(title){
-  	console.group("Zmiana tytułu okna");
+  	console.group(string_group_setTitle);
     document.title=title;
     $("#title").html(title);
-    console.log("Ustawiono tytuł okna na: "+title);
-    console.groupEnd("Zmiana tytułu okna");
+    console.log(title);
+    console.groupEnd(string_group_setTitle);
   }
   function settings(){
   	location.hash="settings";
-  	console.group("Ustawienia aplikacji");
+  	console.group(string_group_settings);
   	console.log(firebase.auth().currentUser);
     $("#settingsNick").html(firebase.auth().currentUser.displayName);
     $("#settingsAvatar").attr("src",firebase.auth().currentUser.photoURL);
     $("#settingsEmail").html(firebase.auth().currentUser.email);
-    console.groupEnd("Ustawienia aplikacji");
+    console.groupEnd(string_group_settings);
   }
   function getMyInfo(){
     getUserInfo(firebase.auth().currentUser.uid);
   }
   function changeNick(){
-  	console.group("Zmiana nicku");
+  	console.group(string_group_changeNick);
     var newNick = $("#edit_nick").val();
-    console.log("Nowy nick: "+newNick);
+    console.log(newNick);
     if(newNick.length>0){
       firebase.auth().currentUser.updateProfile({
         displayName:newNick
@@ -632,81 +629,81 @@ req.send(null);
         firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
           actualNick:newNick
         }).then(function(){
-          M.toast({html:"Gotowe!"});
-          console.log("Nick został pomyślnie zmieniony.");
-          console.groupEnd("Zmiana nicku");
+          M.toast({html:string_changeNick_success});
+          console.log(string_changeNick_success);
+          console.groupEnd(string_group_changeNick);
         })
       })
     }
   }
   function changePassword(){
-  	console.group("Zmiana hasła");
+  	console.group(string_group_changePassword);
   	var newPassword = $("#new_password").val();
     var password = $("#old_password").val();
     var credential = firebase.auth.EmailAuthProvider.credential(firebase.auth().currentUser.email, password);
       firebase.auth().currentUser.reauthenticateWithCredential(credential).then(function() {
   firebase.auth().currentUser.updatePassword(newPassword).then(function() {
-  	console.log("Hasło zostało pomyślnie zmienione.");
-  	console.groupEnd("Zmiana hasła");
-  M.toast({html:"Twoje hasło zostało pomyślnie zmienione."});
+  	console.log(string_changePassword_success);
+  	console.groupEnd(string_group_changePassword);
+  M.toast({html:string_changePassword_success});
 }).catch(function(error) {
-	console.error("Błąd zmiany hasła: "+error.message);
-	console.groupEnd("Zmiana hasła");
+	console.error(error.message);
+	console.groupEnd(string_group_changePassword);
   M.toast({html:error.message});
 });
 }).catch(function(error) {
-	console.error("Błąd ponownego uwierzytelniania: "+error.message);
-	console.groupEnd("Zmiana hasła");
+	console.error(error.message);
+	console.groupEnd(string_group_changePassword);
   M.toast({html:error.message});
 });
 }
     function deleteAccount(){
-    console.group("Usuwanie konta");
+    console.group(string_group_deleteAccount);
     var password = $("#delete_account_password").val();
     var credential = firebase.auth.EmailAuthProvider.credential(firebase.auth().currentUser.email, password);
       firebase.auth().currentUser.reauthenticateWithCredential(credential).then(function() {
   var uid = firebase.auth().currentUser.uid;
   firebase.auth().currentUser.delete().then(function() {
-  M.toast({html:"Twoje konto zostało usunięte."});
+  M.toast({html:string_account_deleted});
   firebase.database().ref("users/"+uid).remove();
   firebase.database().ref("tokens/"+uid).remove();
-  console.log("Konto zostało usunięte");
-  console.groupEnd("Usuwanie konta");
+  console.log(":(");
+  console.groupEnd(string_group_deleteAccount);
 }).catch(function(error) {
   M.toast({html:error.message});
-  console.error("Błąd usuwania konta: "+error.message);
-  console.groupEnd("Usuwanie konta");
+  console.error(error.message);
+  console.groupEnd(string_group_deleteAccount);
 });
 }).catch(function(error) {
   M.toast({html:error.message});
-  console.error("Błąd ponownego uwierzytelniania: "+error.message);
-  console.groupEnd("Usuwanie konta");
+  console.error(error.message);
+  console.groupEnd(string_group_deleteAccount);
 });
   }
   function changeEmail(){
-  	console.group("Zmiana adresu e-mail");
+  	console.group(string_group_changeEmail);
     var newEmail = $("#edit_email").val();
     var password = $("#edit_email_password").val();
-    console.log("Nowy adres: "+newEmail);
+    console.log(newEmail);
     var credential = firebase.auth.EmailAuthProvider.credential(firebase.auth().currentUser.email, password);
       firebase.auth().currentUser.reauthenticateWithCredential(credential).then(function() {
   firebase.auth().currentUser.updateEmail(newEmail).then(function() {
-  M.toast({html:"Gotowe."});
-  console.log("Adres e-mail został pomyślnie zmieniony.");
-  console.groupEnd("Zmiana adresu e-mail");
+  M.toast({html:string_changeEmail_success});
+  console.log(string_changeEmail_success);
+  console.groupEnd(string_group_changeEmail);
 }).catch(function(error) {
   M.toast({html:error.message});
-  console.error("Błąd zmiany adresu e-mail: "+error.message);
-  console.groupEnd("Zmiana adresu e-mail");
+  console.error(error.message);
+  console.groupEnd(string_group_changeEmail);
 });
 }).catch(function(error) {
 	M.toast({html:error.message});
-	console.error("Błąd ponownego uwierzytelniania: "+error.message);
-	console.groupEnd("Zmiana adresu e-mail");
+	console.error(error.message);
+	console.groupEnd(string_group_changeEmail);
 });
   }
   function changeAvatar(){
-  	console.group("Zmiana zdjęcia profilowego");
+  	console.group(string_group_changeAvatar);
     var AvatarRef = firebase.storage().ref(firebase.auth().currentUser.uid+"/avatar"+Math.floor(Math.random()*10));
     var file = $("#upload_avatar")[0].files[0];
     var uploadTask = AvatarRef.put(file);
@@ -714,60 +711,61 @@ req.send(null);
     var progressText = $("#upload_avatar_state");
     progressBar.width("0%");
     uploadTask.on('state_changed', function(snapshot){
-  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  console.log(`Postęp przesyłania: ${progress}%`);
-  progressBar.width(progress+"%");
+  var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + "%";
+  console.log(progress);
+  progressBar.width(progress);
+  console.log(snapshot.state);
   switch (snapshot.state) {
     case firebase.storage.TaskState.PAUSED:
-      console.log('Przesyłanie wstrzymane');
-      progressText.html(`${progress}%, przesyłanie wstrzymane. Sprawdź połączenie.`);
+      progressText.html(progress+", "+string_upload_paused);
       break;
     case firebase.storage.TaskState.RUNNING:
-      console.log('Przesyłanie w toku');
-      progressText.html(`${progress}%, przesyłanie w toku...`);
+      progressText.html(progress+", "+string_upload_running);
       break;
   }
 }, function(error) {
 	console.error(error.message);
-  M.toast({html:"Przesyłanie nie powiodło się."});
-  console.groupEnd("Zmiana zdjęcia profilowego");
+  M.toast({html:error.message});
+  console.groupEnd(string_group_changeAvatar);
 }, function() {
   uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
-    console.log('Przesłano plik: '+ downloadURL);
+    console.log(downloadURL);
     firebase.auth().currentUser.updateProfile({
       photoURL:downloadURL
     }).then(function(){
       firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
         actualImage:downloadURL
       }).then(function(){
-      	console.log("Przesyłanie zakończone powodzeniem.");
-        M.toast({html:"Twój awatar został przesłany."});
-        console.groupEnd("Zmiana zdjęcia profilowego");
+      	progressBar.width("0%");
+      	progressText.html("");
+      	console.log(string_changeAvatar_success);
+        M.toast({html:string_changeAvatar_success});
+        console.groupEnd(string_group_changeAvatar);
       })
     })
   });
 });
   }
   function resetAvatar(){
-  	console.group("Resetowanie zdjęcia profilowego");
+  	console.group(string_group_resetAvatar);
     firebase.auth().currentUser.updateProfile({
       photoURL:"logo_small.png"
     }).then(function(){
       firebase.database().ref("users/"+firebase.auth().currentUser.uid).update({
         actualImage:"logo_small.png"
       }).then(function(){
-        M.toast({html:"Twój dotychczasowy awatar został zastąpiony domyślnym."});
-        console.log("Przywrócono domyślny awatar.");
-        console.groupEnd("Resetowanie zdjęcia profilowego");
+        M.toast({html:string_resetAvatar_success});
+        console.log(string_resetAvatar_success);
+        console.groupEnd(string_group_resetAvatar);
       })
     })
   }
   var userdbRef;
   function getAccountConfig(user){
-  	console.group("Konfiguracja konta");
+  	console.group(string_group_getAccountConfig);
     if(user.displayName==null){
-    	console.log("To jest pierwsze logowanie.");
-    	console.log("Ustawianie nicku na: "+$("#nick").val());
+    	console.log(string_first_login);
+    	console.log(string_group_changeNick+": "+$("#nick").val());
       user.updateProfile({
   displayName: $("#nick").val(),
   photoURL:"logo_small.png"
@@ -777,14 +775,14 @@ req.send(null);
     "actualNick":$("#nick").val(),
     "actualImage":"logo_small.png"
   }).then(function(){
-  	console.log("Ukończono podstawową konfigurację konta");
-  	console.groupEnd("Konfiguracja konta");
+  	console.log(string_getAccountConfig_success);
+  	console.groupEnd(string_group_getAccountConfig);
     getAccountConfig(user);
   })
 });
   }
   else{
-  	console.log("Konto jest już skonfigurowane.");
+  	console.log(string_second_login);
     $("#avatar").attr("src",user.photoURL);
     $("#nickname").html(user.displayName);
     $("#edit_nick").val(user.displayName);
@@ -793,49 +791,50 @@ req.send(null);
     $("#unlogged").hide();
     $("#logged").show();
     $("#loader").hide();
-    console.groupEnd("Konfiguracja konta");
+    console.groupEnd(string_group_getAccountConfig);
   }
 }
 messaging.onTokenRefresh(() => {
-	console.group("Odświeżanie tokenu");
+	console.group(string_group_onTokenRefresh);
   messaging.getToken().then((refreshedToken) => {
-    console.log('Nowy token WebPush: '+refreshedToken);
+    console.log(refreshedToken);
   firebase.database().ref("tokens/"+firebase.auth().currentUser.uid).set(refreshedToken);
-  console.group("Odświeżanie tokenu");
+  console.groupEnd(string_group_onTokenRefresh);
   }).catch((err) => {
-    console.error('Nie udało się odświeżyć tokenu WebPush: ', err);
-    showToken('Nie udało się odświeżyć tokenu WebPush: ', err);
+    console.error(err);
+    console.groupEnd(string_group_onTokenRefresh);
   });
 });
 
 messaging.onMessage((payload) => {
-  console.log('Nowa wiadomość: '+ payload);
+	console.group(string_group_onMessage);
+  console.log(payload);
+  console.groupEnd(string_group_onMessage);
 });
 
   firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     firebase.database().goOnline();
     Notification.requestPermission().then((permission) => {
+    	console.log(permission);
   if (permission === 'granted') {
-    console.log('Przyznano uprawnienia do powiadomień');
     messaging.getToken().then((currentToken) => {
   if (currentToken) {
     console.log(currentToken);
-    M.toast({html:"Usługa powiadomień uruchomiona.",classes:"green darken-4",displayLength:200});
+    M.toast({html:string_push_permission_granted,classes:"green darken-4",displayLength:200});
     M.toast({html:currentToken,classes:"blue accent-2",displayLength:200});
   firebase.database().ref("tokens/"+firebase.auth().currentUser.uid).set(currentToken);
   } else {
-    console.log('Token WebPush jest niedostępny.');
+    console.error(string_push_token_unavaiable);
   }
 }).catch((err) => {
-  console.error('Nie udało się uzyskać tokenu', err);
+  console.error(err);
 });
   } else {
-    console.error('Nie zezwolono na powiadomienia.');
-    M.toast({html:"Powiadomienia są zablokowane. Nie będziesz otrzymywał informacji o nowych wiadomościach.",classes:"yellow accent-2 red-text"});
+    console.error(string_push_permission_denied);
+    M.toast({html:string_push_permission_denied,classes:"yellow accent-2 red-text"});
   }
 });
-    M.toast({html:"Witaj, "+user.displayName});
     var myConnectionsRef = firebase.database().ref('users/'+user.uid+'/connections');
 var lastOnlineRef = firebase.database().ref('users/'+user.uid+'/lastOnline');
 var connectedRef = firebase.database().ref('.info/connected');
@@ -853,54 +852,73 @@ connectedRef.on('value', function(snap) {
 });
     openChannelSelector();
   } else {
-    console.log("Użytkownik nie jest zalogowany.");
+    console.log(string_not_logged_in);
     $("#logged").hide();
     $("#unlogged").show();
     $("#loader").hide();
   }
 });
   function register(){
+  	console.group(string_group_register);
     var nick = $("#nick").val();
+    console.log(nick);
     var email = $("#email").val();
+    console.log(email);
     var password = $("#password").val();
     if(nick.length>0){
     $("#loader").show();
     $("#unlogged").hide();
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(){
+    	console.groupEnd(string_group_register);
+    }).catch(function(error) {
   console.error(error.code);
-  M.toast({html: 'Błąd podczas tworzenia konta: '+error.message});
+  M.toast({html:error.message});
   $("#loader").hide();
   $("#unlogged").show();
+  console.groupEnd(string_group_register);
 });
 }
   else{
-    M.toast({html: 'Musisz podać nazwę użytkownika.'});
+    M.toast({html: string_register_empty_nick});
+    console.groupEnd(string_group_register);
   }
   }
   function login(){
+  	console.group(string_group_login);
     var email = $("#login_email").val();
     var password = $("#login_password").val();
+    console.log(email);
     $("#loader").show();
     $("#unlogged").hide();
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function(){
+    	console.groupEnd(string_group_login);
+    }).catch(function(error) {
   console.error(error.code);
-  M.toast({html: 'Błąd podczas logowania: '+error.message});
+  M.toast({html: error.message});
   $("#loader").hide();
   $("#unlogged").show();
+  console.groupEnd(string_group_login);
 });
   }
   function logOut(){
+  	console.group(string_group_logOut);
     $("#loader").show();
     $("#logged").hide();
     firebase.database().goOffline();
-    firebase.auth().signOut();
+    firebase.auth().signOut().then(function(){
+    	console.groupEnd(string_group_logOut);
+    });
   }
   function password_reset(){
+  	console.group(string_group_password_reset);
     var email = $("#recovery_email").val();
+    console.log(email);
     firebase.auth().sendPasswordResetEmail(email).then(function() {
-  M.toast({html: 'Wysłano instrukcje odzyskiwania na adres: '+email})
+  M.toast({html: string_password_reset_success+email});
+  console.groupEnd(string_group_password_reset);
 }).catch(function(error) {
   console.error(error.code);
-  M.toast({html: 'Błąd: '+error.message})
+  M.toast({html:error.message});
+  console.groupEnd(string_group_password_reset);
 });
   }
