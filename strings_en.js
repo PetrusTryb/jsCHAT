@@ -109,3 +109,4 @@ const string_group_logOut = "Logout";
 const string_group_password_reset = "Password recovery";
 const string_password_reset_success = "Recovery instructions have been sent to:";
 const string_group_changeRankWindow = "User rank change window";
+const string_group_changeRank = "Changing rank of user ";

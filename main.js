@@ -15,7 +15,6 @@
   const messaging = firebase.messaging();
   messaging.usePublicVapidKey("BPDAW6zbeuUv-DLHgb8te4i3WuWATdLYxok79bIZvUL9M08gDTV4HFh_Xp-2AMs5N55xRmzNtL4n3-4mp1zhizY");
   M.AutoInit();
-  //M.toast({html:"Logowanie...",displayLength:500});
   var messagesRef;
   var metaRef;
   tinymce.init({ selector:'#textedit',plugins: ['media image emoticons autolink charmap code preview'],
@@ -27,9 +26,7 @@ remove_script_host : false,
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview',
   mobile: {
     theme: 'silver',
-    plugins: ['media image emoticons autolink charmap code'],
-  images_upload_url: 'upload.php',
-  automatic_uploads: false,
+    plugins: ['autosave autolink lists'],
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview'
   }
         });
@@ -107,7 +104,8 @@ function editChannelWindow(){
 				var nick=string_everyone;
 				var avatar = "logo_small.png";
 			}
-				$("#userManager:last-child").append('<tr onclick="getUserInfo(\''+uid+'\')" class="modal-trigger" href="#userInfo"><td><img class="circle avatar" src="'+avatar+'">'+nick+''+string_permissions[user.val()]+'</td></tr>');
+				$("#userManager:last-child").append('<tr class="modal-close modal-trigger" href="#userInfo" id="userInfo'+uid+'"><td><img class="circle avatar" src="'+avatar+'">'+nick+''+string_permissions[user.val()]+'</td></tr>');
+        $("#userInfo"+uid).click(function(){getUserInfo(uid)});
 			})
 		})
 		console.log(string_editChannelWindow_success);
@@ -137,14 +135,15 @@ function renameChannel(){
       var table = $("#channelSelectorBody");
       table.html("");
       snapshot.forEach(function(childSnapshot){
-        key=childSnapshot.key;
+        var key=childSnapshot.key;
         var childName = childSnapshot.val().name;
         var permission = childSnapshot.val().permissions[firebase.auth().currentUser.uid];
         if(permission===undefined)
           permission = childSnapshot.val().permissions["EVERYONE"];
       	console.log(key+" ("+childName+"): "+permission);
         if(permission!=undefined){
-          table.append("<tr onclick='joinChannel("+key+")'><td>"+childName+"</td><td>"+string_permission[permission]+"</td></tr>");
+          table.append("<tr id='join"+key+"'><td>"+childName+"</td><td>"+string_permission[permission]+"</td></tr>");
+          $("#join"+key).click(function(){joinChannel(key)});
         }
       })
       console.log(string_openChannelSelector_success);
@@ -429,12 +428,29 @@ req.send(null);
 	});
 	}
   }
+  var newRank;
   function changeRankWindow(uid,currentPermission){
   	console.group(string_group_changeRankWindow);
+    location.hash="permissions";
   	console.log(`${uid}: ${currentPermission}`);
   	$("input[value="+currentPermission+"]").prop("checked",true);
+    newRank = currentPermission;
+    $("input[value='ADMIN']").click(function(){newRank="ADMIN"});
+    $("input[value='MEMBER']").click(function(){newRank="MEMBER"});
+    $("input[value='GUEST']").click(function(){newRank="GUEST"});
+    $("#saveRank").off("click");
+    $("#saveRank").click(function(){changeRank(uid)});
   	$("#changeRankNick").html($("#userInfoNick").html());
   	console.groupEnd(string_group_changeRankWindow);
+  }
+  function changeRank(uid){
+    $("#saveRank").off("click");
+    console.group(string_group_changeRank+uid);
+    console.log(newRank);
+    firebase.database().ref("channels/"+channelId+"/permissions/"+uid).set(newRank).then(function(){
+      location.hash="user";
+      console.groupEnd(string_group_changeRank+uid);
+    })
   }
   function getAuthorData(msgId,message){
   	console.group(string_group_getAuthorData);
@@ -462,13 +478,11 @@ req.send(null);
       firebase.database().ref("channels/"+channelId+"/messages/"+id+"/votes/"+firebase.auth().currentUser.uid).set(type).then(function(){
         M.toast({html:string_sendVote_success});
         count(uid,"points",type*5);
-        contextMenu(id,uid);
         console.groupEnd(string_group_sendVote);
       });
     else
       firebase.database().ref("channels/"+channelId+"/messages/"+id+"/votes/"+firebase.auth().currentUser.uid).remove().then(function(){
         M.toast({html:string_sendVote_removed});
-        contextMenu(id,uid);
         console.groupEnd(string_group_sendVote);
       });
   }
@@ -497,7 +511,9 @@ req.send(null);
               firebase.database().ref("users/"+previousMessage.author+"/deleted_count").set(1);
           	console.log(string_removeMessage_success+id);
           	console.groupEnd(string_group_removeMessage);
-            M.toast({html:string_removeMessage_success+id+" <button class='btn-flat toast-action' onclick='undo("+id+",false)'>"+string_undo+"</button>"});
+            M.toast({html:string_removeMessage_success+id+" <button class='btn-flat toast-action' id='undo"+id+"'>"+string_undo+"</button>"});
+            $("#undo"+id).off("click");
+            $("#undo"+id).click(function(){undo(id,false)});
           })
         })
     })
@@ -512,7 +528,9 @@ req.send(null);
     var myVoteStatus = $("#yourVote");
     var undoVoteButton = $("#voteBack");
     var removeButton = $("#deleteMessage");
+    upvoteButton.off("click");
     upvoteButton.click(function(){sendVote(1,id,owner)});
+    downvoteButton.off("click");
     downvoteButton.click(function(){sendVote(-1,id,owner)});
     upvoteButton.attr("disabled",false);
     downvoteButton.attr("disabled",false);
@@ -536,10 +554,12 @@ req.send(null);
             undoVoteButton.attr("disabled",false);
             if(vote.val()==1){
               myVoteStatus.html(string_reaction_positive);
+              undoVoteButton.off("click");
               undoVoteButton.click(function(){sendVote(0,id,owner);count(owner,"points",-5);});
             }
             if(vote.val()==-1){
               myVoteStatus.html(string_reaction_negative);
+              undoVoteButton.off("click");
               undoVoteButton.click(function(){sendVote(0,id,owner);count(owner,"points",5)});
             }
           }
@@ -552,7 +572,7 @@ req.send(null);
       instance.open();
       console.groupEnd(string_group_contextMenu);
     })
-    removeButton.onclick=function(){removeMessage(id);};
+    removeButton.click(function(){removeMessage(id)});
     if(isAdmin||owner==firebase.auth().currentUser.uid){
       removeButton.show();
     }
@@ -571,7 +591,11 @@ req.send(null);
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.append("<div class='my yellow accent-2' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
+        messagesDiv.append("<div class='my yellow accent-2' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' id='user"+message.author+"' href='#userInfo'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
+        $("#message"+msgId).off("contextmenu");
+        $("#message"+msgId).contextmenu(function(){contextMenu(msgId,message.author)})
+        $("#user"+message.author).off("click");
+        $("#user"+message.author).click(function(){getUserInfo(message.author)});
       }
       else{
         messagesDiv.append("<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>");
@@ -596,6 +620,9 @@ req.send(null);
     	}
  		openChannelSelector();
  		break;
+  case "#user":
+
+    break;
  }
 }
   var channelId;

@@ -109,3 +109,4 @@ const string_group_logOut = "Wylogowywanie";
 const string_group_password_reset = "Odzyskiwanie hasła";
 const string_password_reset_success = "Wysłano instrukcje odzyskiwania na adres: ";
 const string_group_changeRankWindow = "Okno zmiany rangi użytkownika";
+const string_group_changeRank = "Zmiana rangi użytkownika ";
