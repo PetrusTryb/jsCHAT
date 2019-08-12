@@ -127,7 +127,7 @@
 </ul>
     <nav>
     <div class="nav-wrapper blue accent-2">
-      <a class="brand-logo"><img src="logo.png" class="small_logo" title="jsCHAT&#13;Jedyny słuszny komunikator"> <span id="title" class="flow-text"></span></a>
+      <a class="brand-logo" href="#selector"><img src="logo.png" class="small_logo" title="jsCHAT&#13;Jedyny słuszny komunikator"> <span id="title" class="flow-text"></span></a>
 
       <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
@@ -262,12 +262,12 @@
       <p id="userInfoReputation"></p>
       <p id="userInfoSent"></p>
       <p id="userInfoSelfDeleted"></p>
-      <p id="userInfoAdminDeleted"></p>
+      <p id="userInfoRank"></p>
       <p id="userInfoUid" class="grey-text"></p>
     </div>
     <div class="modal-footer">
       <a class="waves-effect waves-yellow btn-flat modal-trigger" href="#changeRank" id="changeRankButton">Zmień rangę</a>
-      <a class="modal-close waves-effect waves-red btn-flat">Wyrzuć</a>
+      <a class="modal-close waves-effect waves-red btn-flat modal-trigger" href="#kick" id="kickButton">Wyrzuć</a>
       <a class="modal-close waves-effect waves-grey btn-flat">Zamknij</a>
     </div>
   </div>
@@ -298,6 +298,16 @@
       <a class="modal-close waves-effect waves-red btn-flat" href="#user">Anuluj</a>
       <a class="modal-close waves-effect waves-green btn-flat" id="saveRank">Zapisz</a>
     </div>
+  </div>
+  <div id="kick" class="modal modal-fixed-footer bottom-sheet">
+    <div class="modal-content">
+      <h4>Wyrzucić <span id="kickNick"></span>?</h4>
+      <p>Nie będzie mógł czytać ani wypowiadać się w tej konwersacji.</p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat" href="#user">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="continueKick">Wyrzuć</a>
+    </div>    
   </div>
   <div id="messageActions" class="modal bottom-sheet">
     <div class="modal-content">

@@ -13,9 +13,9 @@ const string_permission = {
 "GUEST" : "<i class='material-icons'>block</i> Wyciszony"
 };
 const string_permissions = {
-	"ADMIN": " - <i>administrator</i>",
-	"MEMBER": " - <i>członek</i>",
-	"GUEST": " - <i>wyciszony</i>"
+	"ADMIN": "Administrator",
+	"MEMBER": "Członek",
+	"GUEST": "Wyciszony"
 };
 const string_editChannelWindow_success = "Załadowano informacje o uprawnieniach.";
 const string_group_renameChannel = "Zmiana nazwy konwersacji #";
@@ -110,3 +110,6 @@ const string_group_password_reset = "Odzyskiwanie hasła";
 const string_password_reset_success = "Wysłano instrukcje odzyskiwania na adres: ";
 const string_group_changeRankWindow = "Okno zmiany rangi użytkownika";
 const string_group_changeRank = "Zmiana rangi użytkownika ";
+const string_group_kickUserWindow = "Okno wyrzucania użytkownika";
+const string_group_kickUser = "Wyrzucanie użytkownika";
+const string_group_kickUser_success = " został wyrzucony z tej konwersacji.";

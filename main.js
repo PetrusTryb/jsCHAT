@@ -104,7 +104,7 @@ function editChannelWindow(){
 				var nick=string_everyone;
 				var avatar = "logo_small.png";
 			}
-				$("#userManager:last-child").append('<tr class="modal-close modal-trigger" href="#userInfo" id="userInfo'+uid+'"><td><img class="circle avatar" src="'+avatar+'">'+nick+''+string_permissions[user.val()]+'</td></tr>');
+				$("#userManager:last-child").append('<tr class="modal-close modal-trigger" href="#userInfo" id="userInfo'+uid+'"><td><img class="circle avatar" src="'+avatar+'">'+nick+'<br/>'+string_permissions[user.val()]+'</td></tr>');
         $("#userInfo"+uid).click(function(){getUserInfo(uid)});
 			})
 		})
@@ -376,6 +376,7 @@ req.send(null);
     var reputationField = $("#userInfoReputation");
     var sentCountField = $("#userInfoSent");
     var deletedSelfCountField = $("#userInfoSelfDeleted");
+    var rankField = $("#userInfoRank");
     if(uid!="EVERYONE")
     firebase.database().ref("users/"+uid).once("value").then(function(snapshot){
       console.log(snapshot.val());
@@ -410,23 +411,52 @@ req.send(null);
 		deletedSelfCountField.html("");
 		console.groupEnd(string_group_getUserInfo);
 	}
+  console.log(showPermissions);
 	if(showPermissions){
 	firebase.database().ref("channels/"+channelId+"/permissions/").once("value").then(function(snapshot){
 		var perm = snapshot.val()[uid];
 		if(!perm)
 			perm=snapshot.val()["EVERYONE"];
-		nickField.append(string_permissions[perm]);
+		rankField.html(string_permissions[perm]);
 		if(isAdmin){
 		$("#changeRankButton").show();
+    $("#changeRankButton").off("click");
 		$("#changeRankButton").click(function(){
 			changeRankWindow(uid,perm);
 		});
+    $("#kickButton").show();
+    $("#kickButton").off("click");
+    $("#kickButton").click(function(){
+      kickUserWindow(uid,nickField.html());
+    })
 	}
 	else{
 		$("#changeRankButton").hide();
+    $("#kickButton").hide();
 	}
 	});
 	}
+  }
+  function kickUserWindow(uid,nick){
+    console.group(string_group_kickUserWindow);
+    console.log(uid);
+    console.log(nick);
+    $("#kickNick").html(nick);
+    $("#continueKick").off("click");
+    $("#continueKick").click(function(){
+      kickUser(uid,nick);
+    })
+    console.groupEnd(string_group_kickUserWindow);
+  }
+  function kickUser(uid,nick){
+    console.group(string_group_kickUser);
+    console.log(uid);
+    console.log(nick);
+    firebase.database().ref("channels/"+channelId+"/permissions/"+uid).remove().then(function(){
+      M.toast({html:nick+string_group_kickUser_success});
+      console.log(nick+string_group_kickUser_success);
+      console.groupEnd(string_group_kickUser);
+    });
   }
   var newRank;
   function changeRankWindow(uid,currentPermission){
@@ -448,7 +478,7 @@ req.send(null);
     console.group(string_group_changeRank+uid);
     console.log(newRank);
     firebase.database().ref("channels/"+channelId+"/permissions/"+uid).set(newRank).then(function(){
-      location.hash="user";
+      getUserInfo(uid);
       console.groupEnd(string_group_changeRank+uid);
     })
   }
@@ -457,10 +487,7 @@ req.send(null);
     firebase.database().ref("users/"+message.author).once("value").then(function(snapshot){
     	console.log(snapshot.val());
     	if(!snapshot.val().isDeleted){
-			$("#info"+msgId).html("<a class='modal-trigger grey-text' href='#userInfo'><img class='circle avatar' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time));
-			$("#info"+msgId).click(function(){
-				getUserInfo(message.author);
-			})
+			$("#info"+msgId).html("<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time));
 		}
 		else
       		$("#info"+msgId).html("<a class='grey-text'>"+string_account_deleted+"</a> &diams; "+timeAgo(message.time));
@@ -591,11 +618,9 @@ req.send(null);
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.append("<div class='my yellow accent-2' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' id='user"+message.author+"' href='#userInfo'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
+        messagesDiv.append("<div class='my yellow accent-2' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' onclick='getUserInfo(\""+firebase.auth().currentUser.uid+"\")' href='#userInfo'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
         $("#message"+msgId).off("contextmenu");
-        $("#message"+msgId).contextmenu(function(){contextMenu(msgId,message.author)})
-        $("#user"+message.author).off("click");
-        $("#user"+message.author).click(function(){getUserInfo(message.author)});
+        $("#message"+msgId).contextmenu(function(){contextMenu(msgId,message.author)});
       }
       else{
         messagesDiv.append("<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>");

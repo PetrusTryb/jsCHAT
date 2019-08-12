@@ -13,9 +13,9 @@ const string_permission = {
 "GUEST": "<i class = 'material-icons'> block </i> Muted"
 };
 const string_permissions = {
-	"ADMIN": " - <i>administrator</i>",
-	"MEMBER": " - <i>member</i>",
-	"GUEST": " - <i>muted</i>"
+	"ADMIN": "Administrator",
+	"MEMBER": "Member",
+	"GUEST": "Muted"
 };
 const string_editChannelWindow_success = "Information about permissions loaded.";
 const string_group_renameChannel = "Changing the conversation name #";
@@ -110,3 +110,6 @@ const string_group_password_reset = "Password recovery";
 const string_password_reset_success = "Recovery instructions have been sent to:";
 const string_group_changeRankWindow = "User rank change window";
 const string_group_changeRank = "Changing rank of user ";
+const string_group_kickUserWindow = "User kick window";
+const string_group_kickUser = "Kick";
+const string_group_kickUser_success = " was kicked from this conversation.";
