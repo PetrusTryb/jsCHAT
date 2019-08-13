@@ -305,7 +305,7 @@ req.send(null);
   	console.group(string_group_scrollToBottom);
     var div = $("#messages");
     console.log(string_scrollToBottom_messages+div[0].scrollHeight+" px.");
-    div.scrollTop(div.scrollHeight);
+    div.scrollTop(div[0].scrollHeight);
     console.log(string_scrollToBottom_body+document.body.scrollHeight+ "px.");
     window.scrollTo(0,document.body.scrollHeight);
     console.groupEnd(string_group_scrollToBottom);
