@@ -125,6 +125,7 @@
   <li><a onclick="settings()" class="modal-trigger" href="#settings">Ustawienia</a></li>
   <li><a onclick="logOut()">Wyloguj się</a></li>
 </ul>
+<div class="navbar-fixed">
     <nav>
     <div class="nav-wrapper blue accent-2">
       <a class="brand-logo" href="#selector"><img src="logo.png" class="small_logo" title="jsCHAT&#13;Jedyny słuszny komunikator"> <span id="title" class="flow-text"></span></a>
@@ -137,7 +138,7 @@
       </ul>
     </div>
   </nav>
-
+</div>
   <ul class="sidenav" id="mobile-nav">
     <li><div class="user-view">
       <div class="background teal">
@@ -255,6 +256,27 @@
       <a class="modal-close waves-effect waves-grey btn-flat">Zamknij</a>
     </div>
   </div>
+  <div id="addUser" class="modal modal-fixed-footer modal-fullscreen">
+    <div class="modal-content">
+      <h4>Dodawanie użytkowników</h4>
+      <div class="row">
+        <table>
+        <thead>
+          <caption>Zaznacz osoby, które chcesz zaprosić do tej konwersacji:</caption>
+        </thead>
+        <tbody id="addUserSelector">
+
+        </tbody>
+      </table>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="addUserProceed">Dodaj</a>
+    </div>
+  </div>
+  
   <div id="userInfo" class="modal bottom-sheet modal-fixed-footer">
     <div class="modal-content">
       <img id="userInfoAvatar" class="circle small_logo"><span id="userInfoNick" class="flow-text"></span>

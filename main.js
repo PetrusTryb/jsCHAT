@@ -85,17 +85,57 @@ remove_script_host : false,
   })
 
 }
+function addUsersWindow(present){
+  location.hash="add";
+    console.group(string_group_addUsersWindow);
+    $("#addUserSelector").html("");
+    firebase.database().ref("users").once('value').then(function(snapshot){
+      snapshot.forEach(function(childSnapshot) {
+      console.log(childSnapshot);
+      if(!childSnapshot.val().isDeleted){
+      console.log(childSnapshot.val());
+      var uid = childSnapshot.key;
+      var nick = childSnapshot.val().actualNick;
+      var avatar = childSnapshot.val().actualImage;
+      if(uid!=firebase.auth().currentUser.uid&&!present.includes(uid))
+        $("#addUserSelector:last-child").append('<tr><td><label><input type="checkbox" class="addUserSelectorCheckbox" id="'+uid+'" name="'+nick+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+'</span></label></td></tr>');
+  }
+  });
+      $("#addUserProceed").off("click");
+      $("#addUserProceed").click(function(){
+        addUsers();
+      });
+      console.groupEnd(string_group_addUsersWindow);
+  })
+}
+function addUsers(){
+  console.group(string_group_addUsers);
+  var items = $(".addUserSelectorCheckbox");
+  $.each(items,function(item){
+    if(items[item].checked){
+      console.log(items[item].id);
+      firebase.database().ref("channels/"+channelId+"/permissions/"+items[item].id).set("MEMBER").then(function(){
+        console.log(items[item]);
+        console.log(items[item].name+string_addUsers_success);
+        M.toast({html:items[item].name+string_addUsers_success});
+      })
+    }
+  });
+  console.groupEnd(string_group_addUsers);
+}
 function editChannelWindow(){
 	location.hash="edit";
 	console.group(string_group_editChannelWindow);
 	$("#chan_edit_name").val($("#title").html());
 	M.updateTextFields();
 	$("#userManager").html("");
+  var uids = "";
 	firebase.database().ref("channels/"+channelId+"/permissions").once("value").then(function(snapshot){
 		console.log(snapshot.val());
 		snapshot.forEach(function(user){
 			firebase.database().ref("users/"+user.key).once("value").then(function(snapshot){
 				var uid = user.key;
+        uids+=user.key;
 				if(uid!="EVERYONE"){
 				var nick = snapshot.val().actualNick;
 				var avatar = snapshot.val().actualImage;
@@ -108,6 +148,11 @@ function editChannelWindow(){
         $("#userInfo"+uid).click(function(){getUserInfo(uid)});
 			})
 		})
+    $("#userManager:last-child").append('<tr class="modal-close modal-trigger" href="#addUser" id="openAddUser"><td><i class="material-icons">person_add</i>'+string_addUsers+'</td></tr>');
+    $("#openAddUser").off("click");
+    $("#openAddUser").click(function(){
+      addUsersWindow(uids);
+    })
 		console.log(string_editChannelWindow_success);
 		console.groupEnd(string_group_editChannelWindow);
 	})
@@ -318,13 +363,13 @@ req.send(null);
         var min = Math.floor(sec/60);
         var hour = Math.floor(min/60);
         if(sec<60)
-          output+=string_just_now;
+          output=string_just_now;
         else if(min<60)
-          output+=min+string_minutes_ago
+          output=min+string_minutes_ago
         else if(hour<24)
-          output+=hour+string_hours_ago;
+          output=hour+string_hours_ago;
         else
-          output+=new Date(time).toLocaleString();
+          output=new Date(time).toLocaleString();
     console.log(output);
     console.groupEnd(string_group_timeAgo);
     return output;
@@ -412,6 +457,7 @@ req.send(null);
 		console.groupEnd(string_group_getUserInfo);
 	}
   console.log(showPermissions);
+  rankField.html("");
 	if(showPermissions){
 	firebase.database().ref("channels/"+channelId+"/permissions/").once("value").then(function(snapshot){
 		var perm = snapshot.val()[uid];
@@ -453,8 +499,8 @@ req.send(null);
     console.log(uid);
     console.log(nick);
     firebase.database().ref("channels/"+channelId+"/permissions/"+uid).remove().then(function(){
-      M.toast({html:nick+string_group_kickUser_success});
-      console.log(nick+string_group_kickUser_success);
+      M.toast({html:nick+string_kickUser_success});
+      console.log(nick+string_kickUser_success);
       console.groupEnd(string_group_kickUser);
     });
   }
