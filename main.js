@@ -1,6 +1,57 @@
   window.onerror=function(){
     	M.toast({html:string_error});
   }
+  var _log = console.log;
+  var _error = console.error;
+  var _warning = console.warn;
+  var _info = console.info;
+  var _group = console.group;
+  var _groupEnd = console.groupEnd;
+  var consoleOut = $("#console");
+  consoleOut.html("");
+  $("#debugMode").click(function(){
+    localStorage.setItem("debug",$("#debugMode").is(":checked"));
+  });
+  console.error = function(errMessage){
+    if(localStorage.getItem("debug")=="true"){
+     consoleOut.append("<p class='red-text'>"+errMessage+"</p>");
+     _error(errMessage);
+    }
+  };
+
+  console.log = function(logMessage){
+      if(localStorage.getItem("debug")=="true"){
+      consoleOut.append("<p>"+logMessage+"</p>");
+      _log(logMessage);
+      }
+  };
+
+  console.warning = function(warnMessage){
+      if(localStorage.getItem("debug")=="true"){
+     consoleOut.append("<p class='yellow-text'>"+warnMessage+"</p>");
+     _warning(warnMessage);
+    }
+  };
+  
+  console.info = function(infoMessage){
+      if(localStorage.getItem("debug")=="true"){
+     consoleOut.append("<p class='blue-text'>"+infoMessage+"</p>");
+     _info(infoMessage);
+    }
+  };
+  console.group = function(groupName){
+      if(localStorage.getItem("debug")=="true"){
+     consoleOut.append("<p>&gt;&gt;"+groupName+"</p>");
+     _group(groupName);
+    }
+  };
+  console.groupEnd = function(groupName){
+      if(localStorage.getItem("debug")=="true"){
+     consoleOut.append("<p>&lt;&lt;"+groupName+"</p>");
+     _groupEnd(groupName);
+    }
+  };
+  
   var firebaseConfig = {
     apiKey: "AIzaSyBdK0boacor04eHtkpaOt-o21n-TISqBTw",
     authDomain: "jschat-official.firebaseapp.com",
@@ -736,6 +787,7 @@ req.send(null);
     $("#settingsAvatar").attr("src",firebase.auth().currentUser.photoURL);
     $("#settingsEmail").html(firebase.auth().currentUser.email);
     console.groupEnd(string_group_settings);
+    $("#debugMode").prop("checked",localStorage.getItem("debug")=="true");
   }
   function getMyInfo(){
     getUserInfo(firebase.auth().currentUser.uid);
