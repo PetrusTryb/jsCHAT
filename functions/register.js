@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 var serviceAccount = process.env.admin_config;
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: serviceAccount,
   databaseURL: "https://jschat-official.firebaseio.com"
 });
 exports.handler = function(event, context, callback) {
