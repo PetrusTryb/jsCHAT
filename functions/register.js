@@ -18,8 +18,8 @@ if(event.httpMethod!="OPTIONS"){
   disabled: false
 })
   .then(function(userRecord) {
-  	FirebaseDatabase database = FirebaseDatabase.getInstance();
-DatabaseReference userData = database.getReference("users/"+userRecord.uid);
+  	var database = FirebaseDatabase.getInstance();
+var userData = database.getReference("users/"+userRecord.uid);
 var initialData = {
 	"actualImage": "logo_small.png",
 	"actualNick": nick,
