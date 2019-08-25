@@ -1,7 +1,10 @@
 const admin = require("firebase-admin");
 var serviceAccount = process.env.admin_config;
-
-admin.initializeApp(serviceAccount);
+console.log(serviceAccount);
+admin.initializeApp({
+  credential: serviceAccount,
+  databaseURL: "https://jschat-official.firebaseio.com"
+});
 exports.handler = function(event, context, callback) {
 if(event.httpMethod!="OPTIONS"){
 	var nick = event.headers["username"];
