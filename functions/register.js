@@ -9,6 +9,43 @@ if(event.httpMethod!="OPTIONS"){
 	var nick = event.headers["username"];
 	var email = event.headers["email"];
 	var password = event.headers["password"];
+	console.log(`Creating account for: ${nick} with email: ${email} and password: ${password}`);
+	admin.auth().createUser({
+  email: email,
+  password: password,
+  displayName: nick,
+  photoURL: 'logo_small.png',
+  disabled: false
+})
+  .then(function(userRecord) {
+  	FirebaseDatabase database = FirebaseDatabase.getInstance();
+DatabaseReference userData = database.getReference("users/"+userRecord.uid);
+var initialData = {
+	"actualImage": "logo_small.png",
+	"actualNick": nick,
+	"lastOnline": new Date(),
+	"points": 0
+};
+userData.set(initialData, function(error) {
+  if (error) {
+     callback(null, {
+    statusCode: 500,
+    body: error
+    });
+  } else {
+     callback(null, {
+    statusCode: 201,
+    body: initialData
+    });
+  }
+});
+  })
+  .catch(function(error) {
+    callback(null, {
+    statusCode: 500,
+    body: error
+    });
+  });
 }
 else{
 	callback(null, {
