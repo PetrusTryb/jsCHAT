@@ -6,6 +6,8 @@
   "repository": "github:PetrusTryb/jsCHAT",
   "dependencies": {
     "node-fetch": "^2.1.2",
-    "firebase-admin": "^8.4.0"
+    "firebase-admin": "^8.4.0",
+    "@firebase/app": "^0.4.15",
+    "@firebase/app-types": "^0.4.3"
   }
 }
