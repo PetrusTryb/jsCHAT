@@ -14,7 +14,7 @@ if(event.httpMethod!="OPTIONS"){
   email: email,
   password: password,
   displayName: nick,
-  photoURL: 'logo_small.png',
+  photoURL: 'https://jschat.netlify.com/logo_small.png',
   disabled: false
 })
   .then(function(userRecord) {
