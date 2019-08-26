@@ -9,24 +9,24 @@ if(event.httpMethod!="OPTIONS"){
 	var nick = event.headers["username"];
 	var email = event.headers["email"];
 	var password = event.headers["password"];
-	if(nick.length<0){
+	if(nick==undefined){
 		callback(null, {
     	statusCode: 500,
-    	body: "You have not entered your nick."
+    	body: "Parameter <i>username</i> is required."
     	});
 		return;
 	}
-	if(email.length<0){
+	if(email==undefined){
 		callback(null, {
     	statusCode: 500,
-    	body: "You must enter a valid email address."
+    	body: "Parameter <i>email</i> is required."
     	});
 		return;
 	}
-	if(password.length<8){
+	if(password==undefined){
 		callback(null, {
     	statusCode: 500,
-    	body: "Password too short or not entered."
+    	body: "Parameter <i>password</i> is required."
     	});
 		return;
 	}
