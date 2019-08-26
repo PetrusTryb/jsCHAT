@@ -9,6 +9,27 @@ if(event.httpMethod!="OPTIONS"){
 	var nick = event.headers["username"];
 	var email = event.headers["email"];
 	var password = event.headers["password"];
+	if(nick.length<0){
+		callback(null, {
+    	statusCode: 500,
+    	body: "You have not entered your nick."
+    	});
+		return;
+	}
+	if(email.length<0){
+		callback(null, {
+    	statusCode: 500,
+    	body: "You must enter a valid email address."
+    	});
+		return;
+	}
+	if(password.length<8){
+		callback(null, {
+    	statusCode: 500,
+    	body: "Password too short or not entered."
+    	});
+		return;
+	}
 	console.log(`Creating account for: ${nick} with email: ${email} and password: ${password}`);
 	admin.auth().createUser({
   email: email,
