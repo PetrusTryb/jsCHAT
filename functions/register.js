@@ -10,6 +10,7 @@ if(event.httpMethod!="OPTIONS"){
 	var email = event.headers["email"];
 	var password = event.headers["password"];
 	if(nick==undefined){
+		console.error("nick is undefined");
 		callback(null, {
     	statusCode: 500,
     	body: "Parameter <i>username</i> is required."
@@ -39,8 +40,8 @@ if(event.httpMethod!="OPTIONS"){
   disabled: false
 }).then(function(userRecord) {
   	console.log(userRecord);
-  	var database = FirebaseDatabase.getInstance();
-var userData = database.getReference("users/"+userRecord.uid);
+  	var database = admin.database();
+var userData = database.ref("users/"+userRecord.uid);
 var initialData = {
 	"actualImage": "https://jschat.netlify.com/logo_small.png",
 	"actualNick": nick,
