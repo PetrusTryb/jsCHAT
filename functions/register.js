@@ -16,23 +16,25 @@ if(event.httpMethod!="OPTIONS"){
   displayName: nick,
   photoURL: 'https://jschat.netlify.com/logo_small.png',
   disabled: false
-})
-  .then(function(userRecord) {
+}).then(function(userRecord) {
+  	console.log(userRecord);
   	var database = FirebaseDatabase.getInstance();
 var userData = database.getReference("users/"+userRecord.uid);
 var initialData = {
-	"actualImage": "logo_small.png",
+	"actualImage": "https://jschat.netlify.com/logo_small.png",
 	"actualNick": nick,
 	"lastOnline": new Date(),
 	"points": 0
 };
 userData.set(initialData, function(error) {
   if (error) {
+  	console.error(error);
      callback(null, {
     statusCode: 500,
     body: error.message
     });
   } else {
+  	console.log(initialData);
      callback(null, {
     statusCode: 201,
     body: userRecord.uid
@@ -41,6 +43,7 @@ userData.set(initialData, function(error) {
 });
   })
   .catch(function(error) {
+  	console.error(error);
     callback(null, {
     statusCode: 500,
     body: error.message
