@@ -30,12 +30,12 @@ userData.set(initialData, function(error) {
   if (error) {
      callback(null, {
     statusCode: 500,
-    body: error
+    body: error.message
     });
   } else {
      callback(null, {
     statusCode: 201,
-    body: initialData
+    body: userRecord.uid
     });
   }
 });
@@ -43,7 +43,7 @@ userData.set(initialData, function(error) {
   .catch(function(error) {
     callback(null, {
     statusCode: 500,
-    body: error
+    body: error.message
     });
   });
 }
