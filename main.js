@@ -1,5 +1,5 @@
-  window.onerror=function(){
-    	M.toast({html:string_error});
+  window.onerror=function(message){
+    error(message);
   }
   var _log = console.log;
   var _error = console.error;
@@ -7,10 +7,20 @@
   var _info = console.info;
   var _group = console.group;
   var _groupEnd = console.groupEnd;
+  var end = 0;
   var consoleOut = $("#console");
   consoleOut.html("");
   $("#debugMode").click(function(){
     localStorage.setItem("debug",$("#debugMode").is(":checked"));
+  });
+  $("#sendButton").click(function(){
+    sendMessage();
+  });
+  $("#createChannelButton").click(function(){
+    createChannel();
+  });
+  $("#renameChannelButton").click(function(){
+    renameChannel();
   });
   console.error = function(errMessage){
     if(localStorage.getItem("debug")=="true"){
@@ -49,6 +59,7 @@
       if(localStorage.getItem("debug")=="true"){
      consoleOut.append("<p>&lt;&lt;"+groupName+"</p>");
      _groupEnd(groupName);
+    end = performance.now();
     }
   };
   
@@ -81,6 +92,9 @@ remove_script_host : false,
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview'
   }
         });
+  function error(details){
+    M.toast({html:string_error+details,classes:"red-text"});
+  }
   function createChannel(){
     console.group(string_group_createChannel);
     firebase.database().ref("chan_count").once("value").then(function(snapshot){
@@ -114,7 +128,6 @@ remove_script_host : false,
     })
   }
   function createChannelWindow(){
-  	location.hash="create";
   	firebase.database().ref("users/"+firebase.auth().currentUser.uid+"/create").set(true);
   	console.group(string_group_createChannelWindow);
   	$("#userSelector").html("");
@@ -131,6 +144,7 @@ remove_script_host : false,
       	$("#userSelector:last-child").append('<tr class="yellow accent-2"><td><label><input type="checkbox" checked="checked" disabled="disabled" class="userSelectorCheckbox" id="'+uid+'"/><span class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+' '+string_you+'</span></label></td></tr>');
   }
   });
+      M.Modal.getInstance($("#createChannel")).open();
       console.log(string_createChannelWindow_success);
       console.groupEnd(string_group_createChannelWindow);
   })
@@ -175,7 +189,6 @@ function addUsers(){
   console.groupEnd(string_group_addUsers);
 }
 function editChannelWindow(){
-	location.hash="edit";
 	console.group(string_group_editChannelWindow);
 	$("#chan_edit_name").val($("#title").html());
 	M.updateTextFields();
@@ -195,8 +208,7 @@ function editChannelWindow(){
 				var nick=string_everyone;
 				var avatar = "logo_small.png";
 			}
-				$("#userManager:last-child").append('<tr class="modal-close modal-trigger" href="#userInfo" id="userInfo'+uid+'"><td><img class="circle avatar" src="'+avatar+'">'+nick+'<br/>'+string_permissions[user.val()]+'</td></tr>');
-        $("#userInfo"+uid).click(function(){getUserInfo(uid)});
+				$("#userManager:last-child").append('<tr><td><a href="#userInfo!'+uid+'!true" id="userInfo'+uid+'" class="black-text"><img class="circle avatar" src="'+avatar+'">'+nick+'<br/>'+string_permissions[user.val()]+'</a></td></tr>');
 			})
 		})
     $("#userManager:last-child").append('<tr class="modal-close modal-trigger" href="#addUser" id="openAddUser"><td><i class="material-icons">person_add</i>'+string_addUsers+'</td></tr>');
@@ -206,6 +218,7 @@ function editChannelWindow(){
     })
 		console.log(string_editChannelWindow_success);
 		console.groupEnd(string_group_editChannelWindow);
+    M.Modal.getInstance($("#editChannel")).open();
 	})
 }
 function renameChannel(){
@@ -355,6 +368,7 @@ req.send(null);
       console.log(string_actionSend_show);
       location.hash="send";
       scrollToBottom();
+      $("#openSend").attr("href","#messages");
     }
     else{
       sendDiv.hide();
@@ -362,6 +376,7 @@ req.send(null);
       console.log(string_actionSend_hide);
       location.hash="messages";
       scrollToBottom();
+      $("#openSend").attr("href","#send");
     }
     console.groupEnd(string_group_actionSend);
   }
@@ -427,7 +442,6 @@ req.send(null);
   }
   
   function ranking(){
-  	location.hash="ranking";
   	console.group(string_group_ranking);
     var table = $("#rankingBody");
     table.html("");
@@ -452,19 +466,17 @@ req.send(null);
         }
       })
       console.groupEnd(string_group_ranking);
-      $("#ranking1").text(myPosition);
-      $("#ranking2").text(myPosition);
       $("#rank"+myPosition).addClass("yellow accent-2");
       try{
       $("#rank1").addClass("amber");
       $("#rank2").addClass("blue-grey");
       $("#rank3").addClass("brown");
     }catch(Error){}
-    })
+    });
+    M.Modal.getInstance($("#ranking")).open();
   }
   function getUserInfo(uid,showPermissions=true){
   	console.group(string_group_getUserInfo);
-  	location.hash="user";
     var nickField = $("#userInfoNick");
     var activityField = $("#userInfoActivity");
     var avatarField = $("#userInfoAvatar");
@@ -533,6 +545,7 @@ req.send(null);
 	}
 	});
 	}
+  $("#userInfo").modal("open");
   }
   function kickUserWindow(uid,nick){
     console.group(string_group_kickUserWindow);
@@ -584,7 +597,7 @@ req.send(null);
     firebase.database().ref("users/"+message.author).once("value").then(function(snapshot){
     	console.log(snapshot.val());
     	if(!snapshot.val().isDeleted){
-			$("#info"+msgId).html("<a class='modal-trigger grey-text' href='#userInfo' onclick='getUserInfo(\""+message.author+"\")'><img class='circle avatar' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time));
+			$("#info"+msgId).html("<a class='grey-text' href='#userInfo!"+message.author+"!true'><img class='circle avatar' src='"+snapshot.val().actualImage+"'>"+snapshot.val().actualNick+"</a> &diams; "+timeAgo(message.time));
 		}
 		else
       		$("#info"+msgId).html("<a class='grey-text'>"+string_account_deleted+"</a> &diams; "+timeAgo(message.time));
@@ -729,21 +742,57 @@ req.send(null);
       console.groupEnd(string_group_autoUpdate);
   }
   window.onhashchange = function() {
- switch(location.hash){
+ switch(location.hash.split("!")[0]){
  	case "#messages":
- 		if(channelId!=undefined)
+ 		if(channelId!=undefined&&firebase.auth().currentUser){
  			joinChannel(channelId);
+      actionSend(false);
+    }
+    $('.modal.open').modal('close');
  		break;
  	case "#selector":
+    if(firebase.auth().currentUser){
  		setTitle(string_selector);
  		if(messagesRef){
  		messagesRef.off();
     	metaRef.off();
     	}
  		openChannelSelector();
+  }
+  $('.modal.open').modal('close');
  		break;
-  case "#user":
-
+  case "#login":
+    login();
+    break;
+  case "#register":
+    if(!firebase.auth().currentUser)
+      register();
+    break;
+  case "#recovery":
+    if(!firebase.auth().currentUser)
+      password_reset();
+    break;
+  case "#settings":
+    if(firebase.auth().currentUser)
+      settings();
+    break;
+  case "#logout":
+    logOut();
+    break;
+  case "#ranking":
+    ranking();
+    break;
+  case "#editChannel":
+    editChannelWindow();
+    break;
+  case "#createChannel":
+    createChannelWindow();
+    break;
+  case "#send":
+    actionSend(true);
+    break;
+  case "#userInfo":
+    getUserInfo(location.hash.split("!")[1],location.hash.split("!")[2]);
     break;
  }
 }
@@ -780,17 +829,17 @@ req.send(null);
     console.groupEnd(string_group_setTitle);
   }
   function settings(){
-  	location.hash="settings";
   	console.group(string_group_settings);
   	console.log(firebase.auth().currentUser);
     $("#settingsNick").html(firebase.auth().currentUser.displayName);
     $("#settingsAvatar").attr("src",firebase.auth().currentUser.photoURL);
     $("#settingsEmail").html(firebase.auth().currentUser.email);
-    console.groupEnd(string_group_settings);
+    M.Modal.getInstance($("#settings")).open();
     $("#debugMode").prop("checked",localStorage.getItem("debug")=="true");
+    console.groupEnd(string_group_settings);
   }
   function getMyInfo(){
-    getUserInfo(firebase.auth().currentUser.uid);
+    getUserInfo(firebase.auth().currentUser.uid,false);
   }
   function changeNick(){
   	console.group(string_group_changeNick);
@@ -1045,6 +1094,7 @@ connectedRef.on('value', function(snap) {
     firebase.auth().createUserWithEmailAndPassword(email, password).then(function(){
     	console.groupEnd(string_group_register);
     }).catch(function(error) {
+      location.hash="";
   console.error(error.code);
   M.toast({html:error.message});
   $("#loader").hide();
@@ -1053,6 +1103,7 @@ connectedRef.on('value', function(snap) {
 });
 }
   else{
+    location.hash="";
     M.toast({html: string_register_empty_nick});
     console.groupEnd(string_group_register);
   }
@@ -1067,6 +1118,7 @@ connectedRef.on('value', function(snap) {
     firebase.auth().signInWithEmailAndPassword(email, password).then(function(){
     	console.groupEnd(string_group_login);
     }).catch(function(error) {
+      location.hash="";
   console.error(error.code);
   M.toast({html: error.message});
   $("#loader").hide();
@@ -1091,6 +1143,7 @@ connectedRef.on('value', function(snap) {
   M.toast({html: string_password_reset_success+email});
   console.groupEnd(string_group_password_reset);
 }).catch(function(error) {
+  location.hash="";
   console.error(error.code);
   M.toast({html:error.message});
   console.groupEnd(string_group_password_reset);

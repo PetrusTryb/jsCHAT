@@ -45,8 +45,7 @@
           <input required id="login_password" type="password" class="validate" placeholder="Password">
         </div>
       </div>
-      <button class="btn right waves-effect" onclick="login()"><i class="material-icons">check</i> Login</button>
-      
+      <a class="btn right waves-effect" href="#login"><i class="material-icons">check</i> Login</a>
     </div>
   </div>
   </div>
@@ -73,8 +72,7 @@
           <input required id="password" type="password" class="validate" placeholder="Password">
         </div>
       </div>
-      <button class="btn right waves-effect" onclick="register()"><i class="material-icons">check</i> Register</button>
-      
+      <a class="btn right waves-effect" href="#register"><i class="material-icons">check</i> Register</a>
     </div>
   </div></div>
     </li>
@@ -88,7 +86,7 @@
           <input required id="recovery_email" type="email" class="validate" placeholder="E-mail address">
         </div>
       </div>
-      <button class="btn right waves-effect" onclick="password_reset()"><i class="material-icons">check</i> Send recovery e-mail</button>
+      <a class="btn right waves-effect" href="#recovery"><i class="material-icons">check</i> Send recovery e-mail</a>
     </div>
   </div>
   </div>
@@ -107,7 +105,7 @@
                   <li><a class="grey-text text-lighten-3" href="https://github.com/PetrusTryb/jsCHAT/" target="_blank">Source code</a></li>
                   <li><a class="grey-text text-lighten-3" href="https://github.com/PetrusTryb/jsCHAT/issues" target="_blank">Report a bug</a></li>
                   <li><a class="grey-text text-lighten-3" href="https://gamerhash.com/pl/ref/19EzBG3a" target="_blank">Earn money with your PC!</a></li>
-                  <li><a class="grey-text text-lighten-3" href="javascript:location.reload(true)">Refresh</a></li>
+                  <li><a class="grey-text text-lighten-3" href="pl.html">Przełącz na polski</a></li>
                 </ul>
               </div>
             </div>
@@ -122,8 +120,8 @@
   </div>
   <div id="logged" class="hidden">
     <ul id="dropdownAccount" class="dropdown-content">
-  <li><a onclick="settings()" class="modal-trigger" href="#settings">Settings</a></li>
-  <li><a onclick="logOut()">Logout</a></li>
+  <li><a href="#settings">Settings</a></li>
+  <li><a href="#logout">Logout</a></li>
 </ul>
 <div class="navbar-fixed">
     <nav>
@@ -132,8 +130,8 @@
 
       <a data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
-      <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". place" id="ranking1"></span></a></li>
-      <li id="editChannelTrigger1" class="hidden"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Conversation preferences</a></li>
+      <li><a href="#ranking">Ranking</a></li>
+      <li id="editChannelTrigger1" class="hidden"><a href="#editChannel">Conversation preferences</a></li>
       <li><a class="dropdown-trigger" data-target="dropdownAccount">My account<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
     </div>
@@ -148,16 +146,16 @@
       <a><span class="white-text name" id="nickname"></span></a>
       <a><span class="white-text email" id="userEmail"></span></a>
     </div></li>
-    <li><a class="modal-trigger" href="#ranking" onclick="ranking()">Ranking <span class="new badge" data-badge-caption=". place" id="ranking2"></span></a></li>
-    <li id="editChannelTrigger2" class="hidden"><a class="modal-trigger" href="#editChannel" onclick="editChannelWindow()">Conversation preferences</a></li>
+    <li><a href="#ranking">Ranking</a></li>
+    <li id="editChannelTrigger2" class="hidden"><a href="#editChannel">Conversation preferences</a></li>
     <li><div class="divider"></div></li>
-    <li><a onclick="settings()" class="modal-trigger" href="#settings">Settings</a></li>
-    <li><a onclick="logOut()">Logout</a></li>
+    <li><a href="#settings">Settings</a></li>
+    <li><a href="#logout">Logout</a></li>
   </ul>
   </ul>
   <div id="channelSelector">
     <div class="fixed-action-btn">
-  <a class="btn-floating btn-large green darken-4 modal-trigger" id="openCreate" href="#createChannel" onclick="createChannelWindow()">
+  <a class="btn-floating btn-large green darken-4" id="openCreate" href="#createChannel">
     <i class="large material-icons">add</i>
   </a>
   <div class="tap-target yellow accent-2" data-target="openCreate" id="create">
@@ -184,7 +182,7 @@
     <div id="messages">
         <div class="progress"><div class="indeterminate"></div></div>
     </div>
-    <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" onclick="actionSend(true);"><i class="large material-icons">add_comment</i></a></div>
+    <div class="fixed-action-btn"><a id="openSend" class="btn-floating btn-large blue" href="#send"><i class="large material-icons">add_comment</i></a></div>
     <div class="tap-target yellow accent-2" data-target="openSend" id="sendPanel">
     <div class="tap-target-content">
       <h5>To write a message,</h5>
@@ -193,14 +191,12 @@
   </div>
     <div id="write" class="hidden">
       <textarea id="textedit"></textarea>
-      <button class="btn waves-effect waves-dark yellow accent-2 black-text full-width" onclick="sendMessage()">Send
+      <button class="btn waves-effect waves-dark yellow accent-2 black-text full-width" id="sendButton">Send
     <i class="material-icons right">send</i>
   </button>
     </div>
   </div>
   </div>
-
-  <!-- Modal Structure -->
   <div id="createChannel" class="modal modal-fixed-footer modal-fullscreen">
     <div class="modal-content">
       <h4>Creating new conversation</h4>
@@ -223,8 +219,8 @@
 
     </div>
     <div class="modal-footer">
-      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
-      <a class="modal-close waves-effect waves-green btn-flat" onclick="createChannel()">Create</a>
+      <a class="modal-close waves-effect waves-red btn-flat" href="#selector">Cancel</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="createChannelButton">Create</a>
     </div>
   </div>
   <div id="editChannel" class="modal modal-fullscreen modal-fixed-footer">
@@ -234,26 +230,21 @@
         <div class="input-field col s9">
 
           <i class="material-icons prefix">edit_mode</i>
-          <input required id="chan_edit_name" type="text" class="validate">
-          <label for="chan_name">Name</label>
+          <input required id="chan_edit_name" type="text" class="validate" placeholder="Name">
         </div>
         <div class="col s3">
-          <button class="btn waves-effect yellow accent-2 black-text" onclick="renameChannel()">Change name</button>
+          <button class="btn waves-effect yellow accent-2 black-text" id="renameChannelButton">Rename</button>
         </div>
         </div>
         <table>
         <thead>
           <caption>Members</caption>
         </thead>
-        <tbody id="userManager">
-
-        </tbody>
+        <tbody id="userManager"></tbody>
       </table>
-      
-
     </div>
     <div class="modal-footer">
-      <a class="modal-close waves-effect waves-grey btn-flat">Close</a>
+      <a class="modal-close waves-effect waves-grey btn-flat" href="#messages">Close</a>
     </div>
   </div>
   <div id="addUser" class="modal modal-fixed-footer modal-fullscreen">
@@ -272,24 +263,24 @@
 
     </div>
     <div class="modal-footer">
-      <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
+      <a class="modal-close waves-effect waves-red btn-flat" href="#editChannel">Cancel</a>
       <a class="modal-close waves-effect waves-green btn-flat" id="addUserProceed">Add</a>
     </div>
   </div>
   
-  <div id="userInfo" class="modal bottom-sheet modal-fixed-footer">
+  <div id="userInfo" class="modal modal-fullscreen modal-fixed-footer">
     <div class="modal-content">
       <img id="userInfoAvatar" class="circle small_logo"><span id="userInfoNick" class="flow-text"></span>
       <p id="userInfoActivity"></p>
       <p id="userInfoReputation"></p>
       <p id="userInfoSent"></p>
       <p id="userInfoSelfDeleted"></p>
-      <p id="userInfoRank"></p>
+      <span id="userInfoRank"></span>
+      <a class="waves-effect waves-yellow btn-flat modal-trigger" href="#changeRank" id="changeRankButton"><i class="material-icons">perm_identity</i> Change rank</a>
+      <a class="waves-effect waves-red btn-flat modal-trigger" href="#kick" id="kickButton"><i class="material-icons">block</i> Kick</a>
       <p id="userInfoUid" class="grey-text"></p>
     </div>
     <div class="modal-footer">
-      <a class="modal-close waves-effect waves-yellow btn-flat modal-trigger" href="#changeRank" id="changeRankButton">Change rank</a>
-      <a class="modal-close waves-effect waves-red btn-flat modal-trigger" href="#kick" id="kickButton">Kick</a>
       <a class="modal-close waves-effect waves-grey btn-flat">Close</a>
     </div>
   </div>
@@ -386,13 +377,24 @@
       <div class="switch">
         Debugging: 
     <label>
-      On
+      Off
       <input type="checkbox" id="debugMode">
       <span class="lever"></span>
-      Off
+      On
     </label>
   </div>
     <pre id="console"></pre>
+    <div class="row">
+    <div class="col s12">
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">mode_edit</i>
+          <input id="console_input" type="text"></input>
+          <label for="console_input">Enter commands...</label>
+        </div>
+      </div>
+    </div>
+  </div>
   </div>
     </div>
     </div>

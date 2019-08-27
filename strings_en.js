@@ -1,4 +1,4 @@
-const string_error = "<i class = 'material-icons'> error </ i> An unexpected problem has been encountered. Check the browser console. ";
+const string_error = "<i class = 'material-icons'> error </ i> An unexpected problem has been encountered: ";
 const string_group_createChannel = "Creating a conversation";
 const string_default_name = "Conversation #";
 const string_createChannel_success = "Conversation has been created.";

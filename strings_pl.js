@@ -1,4 +1,4 @@
-const string_error = "<i class='material-icons'>error</i> Napotkano nieoczekiwany problem. Sprawdź konsolę przeglądarki.";
+const string_error = "<i class='material-icons'>error</i> Napotkano nieoczekiwany problem: ";
 const string_group_createChannel = "Tworzenie konwersacji";
 const string_default_name = "Konwersacja #";
 const string_createChannel_success = "Konwersacja została utworzona.";

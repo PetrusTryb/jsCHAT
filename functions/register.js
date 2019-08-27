@@ -10,7 +10,7 @@ if(event.httpMethod!="OPTIONS"){
 	var email = event.headers["email"];
 	var password = event.headers["password"];
 	if(nick==undefined){
-		console.error("nick is undefined");
+		console.error("Nick is undefined");
 		callback(null, {
     	statusCode: 500,
     	body: "Parameter <i>username</i> is required."
@@ -18,6 +18,7 @@ if(event.httpMethod!="OPTIONS"){
 		return;
 	}
 	if(email==undefined){
+		console.error("Email is undefined");
 		callback(null, {
     	statusCode: 500,
     	body: "Parameter <i>email</i> is required."
@@ -25,6 +26,7 @@ if(event.httpMethod!="OPTIONS"){
 		return;
 	}
 	if(password==undefined){
+		console.error("Password is undefined");
 		callback(null, {
     	statusCode: 500,
     	body: "Parameter <i>password</i> is required."
