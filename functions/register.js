@@ -47,7 +47,7 @@ var userData = database.ref("users/"+userRecord.uid);
 var initialData = {
 	"actualImage": "https://jschat.netlify.com/logo_small.png",
 	"actualNick": nick,
-	"lastOnline": new Date(),
+	"lastOnline": Date.now(),
 	"points": 0
 };
 userData.set(initialData, function(error) {
