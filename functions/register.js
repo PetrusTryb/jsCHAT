@@ -13,7 +13,8 @@ if(event.httpMethod!="OPTIONS"){
 		console.error("Nick is undefined");
 		callback(null, {
     	statusCode: 500,
-    	body: "Parameter <i>username</i> is required."
+    	body: "Parameter <i>username</i> is required.",
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     	});
 		return;
 	}
@@ -21,7 +22,8 @@ if(event.httpMethod!="OPTIONS"){
 		console.error("Email is undefined");
 		callback(null, {
     	statusCode: 500,
-    	body: "Parameter <i>email</i> is required."
+    	body: "Parameter <i>email</i> is required.",
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     	});
 		return;
 	}
@@ -29,7 +31,8 @@ if(event.httpMethod!="OPTIONS"){
 		console.error("Password is undefined");
 		callback(null, {
     	statusCode: 500,
-    	body: "Parameter <i>password</i> is required."
+    	body: "Parameter <i>password</i> is required.",
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     	});
 		return;
 	}
@@ -52,28 +55,28 @@ var initialData = {
 userData.set(initialData, function(error) {
   if (error) {
   	console.error(error);
-     callback(null, {
+     return callback(null, {
     statusCode: 500,
-    body: error.message
+    body: error.message,
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
-     return;
   } else {
   	console.log("Created new user with uid: "+userRecord.uid);
-    callback(null, {
+    return callback(null, {
     statusCode: 201,
-    body: userRecord.uid
+    body: userRecord.uid,
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
-     return;
   }
 });
   })
   .catch(function(error) {
   	console.error(error);
-    callback(null, {
+    return callback(null, {
     statusCode: 500,
-    body: error.message
+    body: error.message,
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
-    return;
   });
 }
 else{
@@ -81,6 +84,5 @@ else{
     statusCode: 204,
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
-  return;
 }
 }
