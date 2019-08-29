@@ -36,6 +36,7 @@ if(event.httpMethod!="OPTIONS"){
     	});
 		return;
 	}
+  return new Promise((resolve, reject) => {
 	console.log(`Creating account for: ${nick} with email: ${email}`);
 	admin.auth().createUser({
   email: email,
@@ -55,14 +56,14 @@ var initialData = {
 userData.set(initialData, function(error) {
   if (error) {
   	console.error(error);
-     return callback(null, {
+     resolve({
     statusCode: 500,
     body: error.message,
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
   } else {
   	console.log("Created new user with uid: "+userRecord.uid);
-    return callback(null, {
+    resolve({
     statusCode: 201,
     body: userRecord.uid,
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
@@ -72,12 +73,13 @@ userData.set(initialData, function(error) {
   })
   .catch(function(error) {
   	console.error(error);
-    return callback(null, {
+    resolve({
     statusCode: 500,
     body: error.message,
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
   });
+});
 }
 else{
 	callback(null, {
