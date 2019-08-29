@@ -33,7 +33,7 @@ if(event.httpMethod!="OPTIONS"){
     	});
 		return;
 	}
-	console.log(`Creating account for: ${nick} with email: ${email} and password: ${password}`);
+	console.log(`Creating account for: ${nick} with email: ${email}`);
 	admin.auth().createUser({
   email: email,
   password: password,
@@ -41,7 +41,6 @@ if(event.httpMethod!="OPTIONS"){
   photoURL: 'https://jschat.netlify.com/logo_small.png',
   disabled: false
 }).then(function(userRecord) {
-  	console.log(userRecord);
   	var database = admin.database();
 var userData = database.ref("users/"+userRecord.uid);
 var initialData = {
@@ -57,12 +56,15 @@ userData.set(initialData, function(error) {
     statusCode: 500,
     body: error.message
     });
+     return;
   } else {
-  	console.log(initialData);
+  	console.log("Created new user with uid: "+userRecord.uid);
+    console.log(performance.now());
      callback(null, {
     statusCode: 201,
     body: userRecord.uid
     });
+     return;
   }
 });
   })
@@ -72,6 +74,7 @@ userData.set(initialData, function(error) {
     statusCode: 500,
     body: error.message
     });
+    return;
   });
 }
 else{
@@ -79,5 +82,6 @@ else{
     statusCode: 204,
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"username, email, password"}
     });
+  return;
 }
 }
