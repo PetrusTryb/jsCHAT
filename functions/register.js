@@ -59,8 +59,7 @@ userData.set(initialData, function(error) {
      return;
   } else {
   	console.log("Created new user with uid: "+userRecord.uid);
-    console.log(performance.now());
-     callback(null, {
+    callback(null, {
     statusCode: 201,
     body: userRecord.uid
     });
