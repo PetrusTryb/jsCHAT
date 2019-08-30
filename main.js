@@ -46,6 +46,9 @@
   $("#renameChannelButton").click(function(){
     renameChannel();
   });
+  $(".back").click(function(){
+    history.go(-1);
+  })
   console.error = function(errMessage){
     if(localStorage.getItem("debug")=="true"){
      consoleOut.append("<p class='red-text'>"+errMessage+"</p>");
@@ -564,11 +567,16 @@ req.send(null);
     })
 	}
 	else{
+    console.log("hide")
 		$("#changeRankButton").hide();
     $("#kickButton").hide();
 	}
 	});
 	}
+  else{
+    $("#changeRankButton").hide();
+    $("#kickButton").hide();
+  }
   $("#userInfo").modal("open");
   }
   function kickUserWindow(uid,nick){
@@ -595,7 +603,6 @@ req.send(null);
   var newRank;
   function changeRankWindow(uid,currentPermission){
   	console.group(string_group_changeRankWindow);
-    location.hash="permissions";
   	console.log(`${uid}: ${currentPermission}`);
   	$("input[value="+currentPermission+"]").prop("checked",true);
     newRank = currentPermission;
@@ -681,7 +688,6 @@ req.send(null);
   }
   function contextMenu(id,owner){
   	console.group(string_group_contextMenu);
-  	location.hash="context";
     var instance = M.Modal.getInstance($("#messageActions"));
     var votesCount = $("#votes");
     var upvoteButton = $("#upvote");
@@ -797,6 +803,7 @@ req.send(null);
       password_reset();
     break;
   case "#settings":
+    $('.modal.open').modal('close');
     if(firebase.auth().currentUser)
       settings();
     break;
@@ -1017,26 +1024,6 @@ req.send(null);
   var userdbRef;
   function getAccountConfig(user){
   	console.group(string_group_getAccountConfig);
-    if(user.displayName==null){
-    	console.log(string_first_login);
-    	console.log(string_group_changeNick+": "+$("#nick").val());
-      user.updateProfile({
-  displayName: $("#nick").val(),
-  photoURL:"logo_small.png"
-}).then(function() {
-  firebase.database().ref("users/"+user.uid).set({
-    "points":0,
-    "actualNick":$("#nick").val(),
-    "actualImage":"logo_small.png"
-  }).then(function(){
-  	console.log(string_getAccountConfig_success);
-  	console.groupEnd(string_group_getAccountConfig);
-    getAccountConfig(user);
-  })
-});
-  }
-  else{
-  	console.log(string_second_login);
     $("#avatar").attr("src",user.photoURL);
     $("#nickname").html(user.displayName);
     $("#edit_nick").val(user.displayName);
@@ -1046,7 +1033,6 @@ req.send(null);
     $("#logged").show();
     $("#loader").hide();
     console.groupEnd(string_group_getAccountConfig);
-  }
 }
 messaging.onTokenRefresh(() => {
 	console.group(string_group_onTokenRefresh);
