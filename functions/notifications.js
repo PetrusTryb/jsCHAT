@@ -34,21 +34,6 @@ exports.handler = function(event, context, callback) {
 		});
 	});
 });
-		/*
-	var req = new XMLHttpRequest();
-req.open('POST', 'https://fcm.googleapis.com/fcm/send', true);
-req.setRequestHeader("content-type", "application/json");
-req.setRequestHeader("authorization", "key="+process.env.fcm_server_key);
-req.onreadystatechange = function (aEvt) {
-  if (req.readyState == 4) {
-     if(req.status == 200)
-      console.info(req.responseText);
-     else
-      console.error(req.responseText);
-  }
-};
-req.send(JSON.stringify());*/
-		
     callback(null, {
     statusCode: 200,
     body: "OK",

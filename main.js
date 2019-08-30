@@ -12,6 +12,30 @@
   consoleOut.html("");
   $("#debugMode").click(function(){
     localStorage.setItem("debug",$("#debugMode").is(":checked"));
+    $("#console_input").attr("disabled",!$("#debugMode").is(":checked"));
+  });
+  $("#console_input").keydown(function(e) {
+      if (e.keyCode == 13) {
+        eval($("#console_input").val());
+      }
+    });
+  $("#changeNick").click(function(){
+    changeNick();
+  });
+  $("#changeEmail").click(function(){
+    changeEmail();
+  });
+  $("#changeAvatar").click(function(){
+    changeAvatar();
+  });
+  $("#resetDefaultAvatar").click(function(){
+    resetAvatar();
+  });
+  $("#changePass").click(function(){
+    changePassword();
+  });
+  $("#deleteAccount").click(function(){
+    deleteAccount();
   });
   $("#sendButton").click(function(){
     sendMessage();
@@ -728,14 +752,14 @@ req.send(null);
       var msgId = snap.key;
       var message = snap.val();
       if(message.author==firebase.auth().currentUser.uid){
-        messagesDiv.append("<div class='my yellow accent-2' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='modal-trigger grey-text' onclick='getUserInfo(\""+firebase.auth().currentUser.uid+"\")' href='#userInfo'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
-        $("#message"+msgId).off("contextmenu");
-        $("#message"+msgId).contextmenu(function(){contextMenu(msgId,message.author)});
+        messagesDiv.append("<div class='my yellow accent-2' id='message"+msgId+"'>"+message.content+"<p class='msgInfo'><a class='grey-text' href='#userInfo!"+firebase.auth().currentUser.uid+"!true'><img class='circle avatar' src='"+firebase.auth().currentUser.photoURL+"'>"+string_you+"</a> &diams; "+timeAgo(message.time)+"</p></div>");
       }
       else{
-        messagesDiv.append("<div class='message' oncontextmenu='contextMenu("+msgId+",\""+message.author+"\")' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>");
+        messagesDiv.append("<div class='message' id='message"+msgId+"'>"+message.content+"<p class='msgInfo' id='info"+msgId+"'></p></div>");
         getAuthorData(msgId,message);
       }
+      $("#message"+msgId).off("contextmenu");
+      $("#message"+msgId).contextmenu(function(){contextMenu(msgId,message.author)});
     })
 	else
 		messagesDiv.html(string_empty_conversation);
@@ -794,6 +818,9 @@ req.send(null);
   case "#userInfo":
     getUserInfo(location.hash.split("!")[1],location.hash.split("!")[2]);
     break;
+  case "#myInfo":
+    getUserInfo(firebase.auth().currentUser.uid,false);
+    break;
  }
 }
   var channelId;
@@ -836,6 +863,7 @@ req.send(null);
     $("#settingsEmail").html(firebase.auth().currentUser.email);
     M.Modal.getInstance($("#settings")).open();
     $("#debugMode").prop("checked",localStorage.getItem("debug")=="true");
+    $("#console_input").attr("disabled",localStorage.getItem("debug")!="true");
     console.groupEnd(string_group_settings);
   }
   function getMyInfo(){
@@ -855,6 +883,7 @@ req.send(null);
           M.toast({html:string_changeNick_success});
           console.log(string_changeNick_success);
           console.groupEnd(string_group_changeNick);
+          settings();
         })
       })
     }
@@ -914,6 +943,7 @@ req.send(null);
   M.toast({html:string_changeEmail_success});
   console.log(string_changeEmail_success);
   console.groupEnd(string_group_changeEmail);
+  settings();
 }).catch(function(error) {
   M.toast({html:error.message});
   console.error(error.message);
@@ -964,6 +994,7 @@ req.send(null);
       	console.log(string_changeAvatar_success);
         M.toast({html:string_changeAvatar_success});
         console.groupEnd(string_group_changeAvatar);
+        settings();
       })
     })
   });
@@ -1081,32 +1112,35 @@ connectedRef.on('value', function(snap) {
     $("#loader").hide();
   }
 });
+  
   function register(){
-  	console.group(string_group_register);
-    var nick = $("#nick").val();
-    console.log(nick);
-    var email = $("#email").val();
-    console.log(email);
-    var password = $("#password").val();
-    if(nick.length>0){
+    console.group(string_group_register);
     $("#loader").show();
     $("#unlogged").hide();
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(function(){
-    	console.groupEnd(string_group_register);
-    }).catch(function(error) {
-      location.hash="";
-  console.error(error.code);
-  M.toast({html:error.message});
-  $("#loader").hide();
-  $("#unlogged").show();
-  console.groupEnd(string_group_register);
-});
-}
-  else{
-    location.hash="";
-    M.toast({html: string_register_empty_nick});
-    console.groupEnd(string_group_register);
+    var req = new XMLHttpRequest();
+req.open('POST', 'https://jschat.netlify.com/.netlify/functions/register', true);
+req.setRequestHeader("username", $("#nick").val());
+req.setRequestHeader("email", $("#email").val());
+req.setRequestHeader("password",$("#password").val());
+req.onreadystatechange = function (aEvt) {
+  if (req.readyState == 4) {
+     if(req.status == 201){
+        console.log(req.responseText);
+        $("#login_email").val($("#email").val());
+        $("#login_password").val($("#password").val());
+        login();
+      }
+     else{
+      console.error(req.responseText);
+      M.toast({html:req.responseText});
+      $("#loader").hide();
+    $("#unlogged").show();
+    }
+     console.groupEnd(string_group_register);
+     location.hash="";
   }
+};
+req.send(null);
   }
   function login(){
   	console.group(string_group_login);

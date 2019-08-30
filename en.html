@@ -322,7 +322,7 @@
       <a class="modal-close waves-effect waves-green btn-flat" id="continueKick">Kick</a>
     </div>    
   </div>
-  <div id="messageActions" class="modal bottom-sheet">
+  <div id="messageActions" class="modal">
     <div class="modal-content">
       <button class="btn green waves-effect modal-close" id="upvote"><i class="material-icons">thumb_up</i></button>
       <span id="votes"></span>
@@ -388,9 +388,8 @@
     <div class="col s12">
       <div class="row">
         <div class="input-field col s12">
-          <i class="material-icons prefix">mode_edit</i>
-          <input id="console_input" type="text"></input>
-          <label for="console_input">Enter commands...</label>
+          <i class="material-icons prefix">developer_mode</i>
+          <input id="console_input" type="text" placeholder="Enter commands..."></input>
         </div>
       </div>
     </div>
@@ -399,7 +398,7 @@
     </div>
     </div>
     <div class="modal-footer">
-      <a class="waves-effect waves-teal btn-flat modal-trigger" href="#userInfo" onclick="getMyInfo()">Profile preview</a>
+      <a class="waves-effect waves-teal btn-flat" href="#myInfo">Profile preview</a>
       <a class="modal-close waves-effect waves-grey btn-flat">Close</a>
     </div>
   </div>
@@ -416,7 +415,7 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
-      <a class="modal-close waves-effect waves-green btn-flat" onclick="changeNick()">OK</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="changeNick">OK</a>
     </div>
   </div>
   <div id="editEmail" class="modal bottom-sheet">
@@ -436,7 +435,7 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
-      <a class="modal-close waves-effect waves-green btn-flat" onclick="changeEmail()">OK</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="changeEmail">OK</a>
     </div>
   </div>
   <div id="uploadAvatar" class="modal bottom-sheet">
@@ -458,7 +457,7 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
-      <a class="waves-effect waves-green btn-flat" onclick="changeAvatar()">Upload</a>
+      <a class="waves-effect waves-green btn-flat" id="changeAvatar">Upload</a>
     </div>
   </div>
   <div id="resetAvatar" class="modal bottom-sheet">
@@ -467,7 +466,7 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-grey btn-flat">No</a>
-      <a class="waves-effect waves-orange btn-flat" onclick="resetAvatar()">Yes</a>
+      <a class="waves-effect waves-orange btn-flat" id="resetDefaultAvatar">Yes</a>
     </div>
   </div>
   <div id="changePassword" class="modal bottom-sheet">
@@ -486,7 +485,7 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
-      <a class="modal-close waves-effect waves-green btn-flat" onclick="changePassword()">OK</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="changePass">OK</a>
     </div>
   </div>
   <div id="confirmDeleteAccount" class="modal bottom-sheet">
@@ -502,7 +501,7 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-red btn-flat">Cancel</a>
-      <a class="modal-close waves-effect waves-green btn-flat red-text" onclick="deleteAccount()">Delete my account</a>
+      <a class="modal-close waves-effect waves-green btn-flat red-text" id="deleteAccount">Delete my account</a>
     </div>
   </div>
 </body>
