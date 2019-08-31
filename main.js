@@ -12,15 +12,7 @@
   consoleOut.html("");
   $("#debugMode").click(function(){
     localStorage.setItem("debug",$("#debugMode").is(":checked"));
-    $("#console_input").attr("disabled",!$("#debugMode").is(":checked"));
   });
-  $("#console_input").keydown(function(e) {
-      if (e.keyCode == 13) {
-        var command = $("#console_input").val();
-        var exec = new Function(command);
-        exec();
-      }
-    });
   $("#changeNick").click(function(){
     changeNick();
   });
@@ -872,7 +864,6 @@ req.send(null);
     $("#settingsEmail").html(firebase.auth().currentUser.email);
     M.Modal.getInstance($("#settings")).open();
     $("#debugMode").prop("checked",localStorage.getItem("debug")=="true");
-    $("#console_input").attr("disabled",localStorage.getItem("debug")!="true");
     console.groupEnd(string_group_settings);
   }
   function getMyInfo(){
