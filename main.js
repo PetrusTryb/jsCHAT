@@ -16,7 +16,9 @@
   });
   $("#console_input").keydown(function(e) {
       if (e.keyCode == 13) {
-        eval($("#console_input").val());
+        var command = $("#console_input").val();
+        var exec = new Function(command);
+        exec();
       }
     });
   $("#changeNick").click(function(){
