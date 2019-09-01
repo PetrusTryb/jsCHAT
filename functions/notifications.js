@@ -48,7 +48,7 @@ if(event.httpMethod!="OPTIONS"){
     console.log(response.successCount + ' messages were sent successfully!');
     resolve({
     statusCode: 200,
-    body: response.successCount,
+    body: response.successCount.toString(),
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channel, channel_name, sender"}
     });
   });
