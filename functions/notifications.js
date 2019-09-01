@@ -7,11 +7,11 @@ const app = admin.initializeApp({
 exports.handler = function(event, context, callback) {
 if(event.httpMethod!="OPTIONS"){
 	console.log(event.headers);
-	var channelId = event.headers["channel"];
+	var channelId = event.headers.channel;
 	console.log(channelId);
-	var channelName = event.headers["channel_name"];
+	var channelName = event.headers.channelname;
 	console.log(channelName);
-	var sender = event.headers["sender"];
+	var sender = event.headers.sender;
 	console.log(sender);
 	return new Promise((resolve, reject) => {
 		var messages = [];
