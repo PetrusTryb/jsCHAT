@@ -100,7 +100,7 @@
   M.AutoInit();
   var messagesRef;
   var metaRef;
-  tinymce.init({ selector:'#textedit',plugins: ['media image emoticons autolink charmap code preview'],
+  tinymce.init({ selector:'#textedit',plugins: ['media image autolink code preview'],
     file_picker_types: 'file image media',
     branding: false,
   automatic_uploads: false,
@@ -109,7 +109,7 @@ remove_script_host : false,
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview',
   mobile: {
     theme: 'silver',
-    plugins: ['autosave autolink lists'],
+    plugins: ['autolink'],
   toolbar: 'undo redo | styleselect | bold italic underline | emoticons image media | code preview'
   }
         });
@@ -257,7 +257,7 @@ function renameChannel(){
   function openChannelSelector(){
   	location.hash="selector";
   	console.group(string_group_openChannelSelector);
-    setTitle(string_selector);
+    setTitle("Konwersacje");
     adminOptions(false);
     $("#channelWindow").hide();
     $("#channelSelector").show();
@@ -272,7 +272,7 @@ function renameChannel(){
           permission = childSnapshot.val().permissions["EVERYONE"];
       	console.log(key+" ("+childName+"): "+permission);
         if(permission!=undefined){
-          table.append("<tr id='join"+key+"'><td>"+childName+"</td><td>"+string_permission[permission]+"</td></tr>");
+          table.append("<tr id='join"+key+"'><td>"+childName+"<br/><i class='grey-text'>"+string_permission[permission]+"</i></td></tr>");
           $("#join"+key).click(function(){joinChannel(key)});
         }
       })
@@ -389,7 +389,10 @@ req.send(null);
       console.log(string_actionSend_show);
       location.hash="send";
       scrollToBottom();
-      $("#openSend").attr("href","#messages");
+      $("#openSend").removeAttr("href");
+      $("#openSend").click(function(){
+        history.back();
+      })
     }
     else{
       sendDiv.hide();
@@ -398,6 +401,7 @@ req.send(null);
       location.hash="messages";
       scrollToBottom();
       $("#openSend").attr("href","#send");
+      $("#openSend").off("click");
     }
     console.groupEnd(string_group_actionSend);
   }
@@ -470,7 +474,7 @@ req.send(null);
       var usersRanking = [];
       var myPosition;
       snapshot.forEach(function(user){
-        usersRanking.push([user.val().actualNick,user.val().points]);
+        usersRanking.push([user.val().actualNick,user.val().points,user.key]);
       });
       usersRanking.sort(function(a, b) {
             return b[1] - a[1];
@@ -482,7 +486,7 @@ req.send(null);
           myPosition=pos;
         }
         if(entry[0]!=undefined){
-        	table.append("<tr id='rank"+pos+"'><td>"+pos+"</td><td>"+entry[0]+"</td><td>"+entry[1]+"<td/></tr>");
+        	table.append("<tr id='rank"+pos+"'><td>"+pos+"</td><td><a class='black-text' href='#userInfo!"+entry[2]+"!false'>"+entry[0]+"</a></td><td>"+entry[1]+"<td/></tr>");
         	pos++;
         }
       })
@@ -496,7 +500,7 @@ req.send(null);
     });
     M.Modal.getInstance($("#ranking")).open();
   }
-  function getUserInfo(uid,showPermissions=true){
+  function getUserInfo(uid,showPermissions="true"){
   	console.group(string_group_getUserInfo);
     var nickField = $("#userInfoNick");
     var activityField = $("#userInfoActivity");
@@ -542,7 +546,7 @@ req.send(null);
 	}
   console.log(showPermissions);
   rankField.html("");
-	if(showPermissions){
+	if(showPermissions!="false"){
 	firebase.database().ref("channels/"+channelId+"/permissions/").once("value").then(function(snapshot){
 		var perm = snapshot.val()[uid];
 		if(!perm)
@@ -805,9 +809,11 @@ req.send(null);
     logOut();
     break;
   case "#ranking":
+    $('.modal.open').modal('close');
     ranking();
     break;
   case "#editChannel":
+    $('.modal.open').modal('close');
     editChannelWindow();
     break;
   case "#createChannel":
@@ -820,7 +826,7 @@ req.send(null);
     getUserInfo(location.hash.split("!")[1],location.hash.split("!")[2]);
     break;
   case "#myInfo":
-    getUserInfo(firebase.auth().currentUser.uid,false);
+    getUserInfo(firebase.auth().currentUser.uid,"false");
     break;
  }
 }

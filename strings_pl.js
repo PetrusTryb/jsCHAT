@@ -8,9 +8,9 @@ const string_createChannelWindow_success = "Zakończono ładowanie listy użytko
 const string_group_editChannelWindow = "Okno właściwości konwersacji";
 const string_everyone = "<i>Wszyscy</i>";
 const string_permission = {
-"ADMIN" : "<i class='material-icons'>star</i> Administrator",
-"MEMBER" : "<i class='material-icons'>message</i> Członek",
-"GUEST" : "<i class='material-icons'>block</i> Wyciszony"
+"ADMIN" : "Jesteś administratorem",
+"MEMBER" : "Jesteś członkiem",
+"GUEST" : "Jesteś wyciszony"
 };
 const string_permissions = {
 	"ADMIN": "Administrator",

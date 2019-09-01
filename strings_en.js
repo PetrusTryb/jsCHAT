@@ -8,9 +8,9 @@ const string_createChannelWindow_success = "The loading of the list of users has
 const string_group_editChannelWindow = "Conversation properties window";
 const string_everyone = "<i>Everyone</i>";
 const string_permission = {
-"ADMIN": "<i class = 'material-icons'> star </i> Administrator",
-"MEMBER": "<i class = 'material-icons'> message </i> Member",
-"GUEST": "<i class = 'material-icons'> block </i> Muted"
+"ADMIN": "You are administrator",
+"MEMBER": "You are member",
+"GUEST": "You are guest"
 };
 const string_permissions = {
 	"ADMIN": "Administrator",
