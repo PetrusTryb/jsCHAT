@@ -26,7 +26,7 @@ if(event.httpMethod!="OPTIONS"){
   notification: {title: channelName, body: "Incoming message from: "+sender},
   token: keys.val()[user.key]
 });
-  				})  			
+  				});
 			}
 			else{
 				keys.forEach(function(key){
@@ -35,7 +35,7 @@ if(event.httpMethod!="OPTIONS"){
   notification: {title: channelName, body: "Incoming message from: "+sender},
   token: key.val()
 });
-				})
+				});
 			}
 			admin.messaging().sendAll(messages)
   .then((response) => {
@@ -46,8 +46,8 @@ if(event.httpMethod!="OPTIONS"){
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, channelName, senderNick"}
     });
   });
-			})
-	})
+			});
+	});
 	});
 }
 else{
@@ -55,4 +55,5 @@ else{
     statusCode: 204,
     headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, channelName, senderNick"}
     });
+}
 }
