@@ -48,7 +48,7 @@ if(event.httpMethod!="OPTIONS"){
   });
 			})
 	})
-	}
+	});
 }
 else{
 	callback(null, {
