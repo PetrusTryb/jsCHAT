@@ -7,11 +7,11 @@ const app = admin.initializeApp({
 exports.handler = function(event, context, callback) {
 if(event.httpMethod!="OPTIONS"){
 	console.log(event.headers);
-	var channelId = event.headers["channelId"];
+	var channelId = event.headers["channel"];
 	console.log(channelId);
-	var channelName = event.headers["channelName"];
+	var channelName = event.headers["channel_name"];
 	console.log(channelName);
-	var sender = event.headers["senderNick"];
+	var sender = event.headers["sender"];
 	console.log(sender);
 	return new Promise((resolve, reject) => {
 		var messages = [];
@@ -44,7 +44,7 @@ if(event.httpMethod!="OPTIONS"){
     resolve({
     statusCode: 200,
     body: messages,
-    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, channelName, senderNick"}
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channel, channel_name, sender"}
     });
   });
 			});
@@ -54,7 +54,7 @@ if(event.httpMethod!="OPTIONS"){
 else{
 	callback(null, {
     statusCode: 204,
-    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, channelName, senderNick"}
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channel, channel_name, sender"}
     });
 }
 }

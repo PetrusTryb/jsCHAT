@@ -289,9 +289,9 @@ function renameChannel(){
 	  console.log(string_sender+senderNick);
 	  var req = new XMLHttpRequest();
 req.open('POST', 'https://jschat.netlify.com/.netlify/functions/notifications', true);
-req.setRequestHeader("channelName", channelName);
-req.setRequestHeader("senderNick", senderNick);
-req.setRequestHeader("channelId",channelId);
+req.setRequestHeader("channel_name", channelName);
+req.setRequestHeader("sender", senderNick);
+req.setRequestHeader("channel",channelId);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
      if(req.status == 200)
