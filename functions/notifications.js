@@ -22,20 +22,25 @@ if(event.httpMethod!="OPTIONS"){
   			tokens.on("value",function(keys){
 			if(!snapshot.hasChild("EVERYONE")){
   				snapshot.forEach(function(user){
+  					if(keys.val()[user.key]!=undefined){
   					console.log("Sending message to: "+keys.val()[user.key]);
   					messages.push({
-  notification: {title: channelName, body: "Incoming message from: "+sender},
-  token: keys.val()[user.key]
-});
+  						notification: {title: channelName, body: "Incoming message from: "+sender},
+  						token: keys.val()[user.key]
+					});
+  					}
+  					else{
+  						console.error("Device not found: "+user.key);
+  					}
   				});
 			}
 			else{
 				keys.forEach(function(key){
 					console.log("Sending message to: "+key.val())
 					messages.push({
-  notification: {title: channelName, body: "Incoming message from: "+sender},
-  token: key.val()
-});
+  						notification: {title: channelName, body: "Incoming message from: "+sender},
+  						token: key.val()
+					});
 				});
 			}
 			admin.messaging().sendAll(messages)
