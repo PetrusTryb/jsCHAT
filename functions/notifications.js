@@ -6,6 +6,7 @@ const app = admin.initializeApp({
 });
 exports.handler = function(event, context, callback) {
 if(event.httpMethod!="OPTIONS"){
+	console.log(event.headers);
 	var channelId = event.headers["channelId"];
 	console.log(channelId);
 	var channelName = event.headers["channelName"];
@@ -16,7 +17,7 @@ if(event.httpMethod!="OPTIONS"){
 		var messages = [];
 		var database = admin.database();
 		var channelUsers = database.ref("channels/"+channelId+"/permissions");
-		ref.on("value", function(snapshot) {
+		channelUsers.on("value", function(snapshot) {
 			var tokens = database.ref("tokens");
   			tokens.on("value",function(keys){
 			if(!snapshot.hasChild("EVERYONE")){
