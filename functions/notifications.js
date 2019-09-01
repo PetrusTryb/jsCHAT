@@ -1,49 +1,58 @@
-const fetch = require("node-fetch");
-exports.handler = function(event, context, callback) {
-	if(event.httpMethod!="OPTIONS"){
-	var channelId = event.headers["channelid"];
-	console.log(channelId);
-	var channelName = event.headers["channelname"];
-	console.log(channelName);
-	var senderNick = event.headers["sendernick"];
-	console.log(senderNick);
-	fetch("https://jschat-official.firebaseio.com/channels/"+channelId+"/permissions.json").then(resp => resp.json())
-    .then(resp => {
-        Object.keys(resp).forEach(function(key){
-    		console.log(key);
-				fetch("https://jschat-official.firebaseio.com/tokens/"+key+".json").then(token => token.json())
-    .then(token => {
-		if(token!=null){
-		var message = {
-    "to": token,
-			"collapse_key": channelName,
-			"priority": "high",
-    "notification": {
-      "title": channelName,
-      "body": senderNick,
-      "click_action":"https://jschat.netlify.com/",
-			"icon": "https://jschat.netlify.com/logo_small.png"
-      }}
-		console.log(message);
-		fetch("https://fcm.googleapis.com/fcm/send",{
-        method: 'post',
-        body:    JSON.stringify(message),
-        headers: { 'Content-Type': 'application/json', 'authorization': 'key='+process.env.fcm_server_key},
-    })
-		}
-		});
-	});
+const admin = require("firebase-admin");
+var serviceAccount = {   "type": "service_account",   "project_id": "jschat-official",   "private_key_id": "5a31ae1c1db80f49da671598d4460edbc7ff1835",   "private_key": process.env.admin_private_key.replace(/\\n/g, '\n'),   "client_email": "firebase-adminsdk-tin01@jschat-official.iam.gserviceaccount.com",   "client_id": "109068982179017847466",   "auth_uri": "https://accounts.google.com/o/oauth2/auth",   "token_uri": "https://oauth2.googleapis.com/token",   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-tin01%40jschat-official.iam.gserviceaccount.com" };
+const app = admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://jschat-official.firebaseio.com",
 });
-    callback(null, {
+exports.handler = function(event, context, callback) {
+if(event.httpMethod!="OPTIONS"){
+	var channelId = event.headers["channelId"];
+	console.log(channelId);
+	var channelName = event.headers["channelName"];
+	console.log(channelName);
+	var sender = event.headers["senderNick"];
+	console.log(sender);
+	return new Promise((resolve, reject) => {
+		var messages = [];
+		var database = admin.database();
+		var channelUsers = database.ref("channels/"+channelId+"/permissions");
+		ref.on("value", function(snapshot) {
+			var tokens = database.ref("tokens");
+  			tokens.on("value",function(keys){
+			if(!snapshot.hasChild("EVERYONE")){
+  				snapshot.forEach(function(user){
+  					console.log("Sending message to: "+keys.val()[user.key]);
+  					messages.push({
+  notification: {title: channelName, body: "Incoming message from: "+sender},
+  token: keys.val()[user.key]
+});
+  				})  			
+			}
+			else{
+				keys.forEach(function(key){
+					console.log("Sending message to: "+key.val())
+					messages.push({
+  notification: {title: channelName, body: "Incoming message from: "+sender},
+  token: key.val()
+});
+				})
+			}
+			admin.messaging().sendAll(messages)
+  .then((response) => {
+    console.log(response.successCount + ' messages were sent successfully!');
+    resolve({
     statusCode: 200,
-    body: "OK",
-    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, senderNick, channelName"}
+    body: messages,
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, channelName, senderNick"}
     });
+  });
+			})
+	})
 	}
-	else{
+}
+else{
 	callback(null, {
     statusCode: 204,
-    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, senderNick, channelName"}
+    headers: {"Access-Control-Allow-Origin":"*","Access-Control-Allow-Headers":"channelId, channelName, senderNick"}
     });
-	}
 }

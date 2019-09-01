@@ -257,7 +257,7 @@ function renameChannel(){
   function openChannelSelector(){
   	location.hash="selector";
   	console.group(string_group_openChannelSelector);
-    setTitle("Konwersacje");
+    setTitle(string_selector);
     adminOptions(false);
     $("#channelWindow").hide();
     $("#channelSelector").show();
