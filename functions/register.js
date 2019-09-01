@@ -6,9 +6,9 @@ const app = admin.initializeApp({
 });
 exports.handler = function(event, context, callback) {
 if(event.httpMethod!="OPTIONS"){
-	var nick = event.headers["username"];
-	var email = event.headers["email"];
-	var password = event.headers["password"];
+	var nick = event.headers.username;
+	var email = event.headers.email;
+	var password = event.headers.password;
 	if(nick==undefined){
 		console.error("Nick is undefined");
 		callback(null, {
