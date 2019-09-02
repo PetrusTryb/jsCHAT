@@ -25,7 +25,7 @@ if(event.httpMethod!="OPTIONS"){
   					if(keys.val()[user.key]!=undefined){
   					console.log("Sending message to: "+keys.val()[user.key]);
   					messages.push({
-  						notification: {title: channelName, body: "Incoming message from: "+sender, click_action:"https://jschat.netlify.com/#messages!"+channelId},
+  						notification: {title: channelName, body: "Incoming message from: "+sender, image: "https://jschat.netlify.com/logo_small.png"},
   						token: keys.val()[user.key]
 					});
   					}
