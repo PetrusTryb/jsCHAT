@@ -115,3 +115,5 @@ const string_addUsers = "Dodaj użytkowników...";
 const string_group_addUsersWindow = "Okno dodawania użytkowników";
 const string_group_addUsers = "Dodawanie użytkowników";
 const string_addUsers_success = " został dodany do konwersacji.";
+const string_group_deleteChannel = "Usuwanie konwersacji";
+const string_deleteChannel_success = "Pomyślnie usunięto konwersację";

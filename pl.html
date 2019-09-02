@@ -221,16 +221,8 @@
   <div id="editChannel" class="modal modal-fullscreen modal-fixed-footer">
     <div class="modal-content">
       <h4>Ustawienia konwersacji</h4>
-      <div class="row">
-        <div class="input-field col s9">
-
-          <i class="material-icons prefix">edit_mode</i>
-          <input required id="chan_edit_name" type="text" class="validate" placeholder="Nazwa">
-        </div>
-        <div class="col s3">
-          <button class="btn waves-effect yellow accent-2 black-text" id="renameChannelButton">Zmień nazwę</button>
-        </div>
-        </div>
+          <button class="btn waves-effect yellow accent-2 black-text modal-trigger" href="#editChannelRename">Zmień nazwę</button>
+          <button class="btn waves-effect red accent-2 black-text modal-trigger" href="#editChannelDelete">Usuń</button>
         <table>
         <thead>
           <caption>Członkowie</caption>
@@ -240,6 +232,31 @@
     </div>
     <div class="modal-footer">
       <a class="modal-close waves-effect waves-grey btn-flat" href="#messages">Zamknij</a>
+    </div>
+  </div>
+  <div id="editChannelRename" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Zmiana nazwy konwersacji</h4>
+      <div class="row">
+        <div class="input-field col s12">
+          <i class="material-icons prefix">edit</i>
+          <input required id="chan_edit_name" type="text" class="validate" placeholder="Nazwa konwersacji">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-red btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-green btn-flat" id="renameChannelButton">Zapisz</a>
+    </div>
+  </div>
+  <div id="editChannelDelete" class="modal bottom-sheet">
+    <div class="modal-content">
+      <h4>Usuwanie konwersacji</h4>
+      <p class="red-text">Czy chcesz usunąć tę konwersację? <b>Wszystkie wiadomości zostaną nieodwracalnie usunięte!</b></p>
+    </div>
+    <div class="modal-footer">
+      <a class="modal-close waves-effect waves-grey btn-flat">Anuluj</a>
+      <a class="modal-close waves-effect waves-red btn-flat" id="deleteChannelButton">Usuń</a>
     </div>
   </div>
   <div id="addUser" class="modal modal-fixed-footer modal-fullscreen">

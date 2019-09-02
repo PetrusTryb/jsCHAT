@@ -115,3 +115,5 @@ const string_addUsers = "Add users...";
 const string_group_addUsersWindow = "Add users window";
 const string_group_addUsers = "Adding users";
 const string_addUsers_success = " was added to this conversation.";
+const string_group_deleteChannel = "Removing conversation";
+const string_deleteChannel_success = "Successfully removed conversation";
