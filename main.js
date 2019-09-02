@@ -153,10 +153,11 @@ remove_script_host : false,
   }
   function deleteChannel(){
     console.group(string_group_deleteChannel);
-    var req = new XMLHttpRequest();
+    firebase.auth().currentUser.getIdToken(true).then(function(token){
+      var req = new XMLHttpRequest();
 req.open('DELETE', 'https://jschat.netlify.com/.netlify/functions/conversation', true);
 req.setRequestHeader("channel", channelId);
-req.setRequestHeader("token", firebase.auth().currentUser.getIdToken());
+req.setRequestHeader("token", token);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
      if(req.status == 200)
@@ -167,6 +168,8 @@ req.onreadystatechange = function (aEvt) {
   }
 };
 req.send(null);
+    })
+    
   }
   function createChannelWindow(){
   	firebase.database().ref("users/"+firebase.auth().currentUser.uid+"/create").set(true);

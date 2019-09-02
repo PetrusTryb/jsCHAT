@@ -16,6 +16,7 @@ if(event.httpMethod=="DELETE"){
     });
 	}
 	var token = event.headers.token;
+	console.log(token);
 	return new Promise((resolve, reject) => {
 	admin.auth().verifyIdToken(token)
   .then(function(decodedToken) {
