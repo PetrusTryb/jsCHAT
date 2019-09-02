@@ -163,17 +163,15 @@ req.onreadystatechange = function (aEvt) {
      if(req.status == 200){
       console.log(req.responseText);
       M.toast({html:string_deleteChannel_success});
-      openChannelSelector();
     }
      else{
       console.error(req.responseText);
       M.toast(req.responseText);
      }
-      
      console.groupEnd(string_group_deleteChannel);
-     openChannelSelector();
   }
 };
+openChannelSelector();
 req.send(null);
     })
     
