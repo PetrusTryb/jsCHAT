@@ -17,7 +17,7 @@ if(event.httpMethod=="DELETE"){
 	}
 	var token = event.headers.token;
 	return new Promise((resolve, reject) => {
-	admin.auth().verifyIdToken(idToken)
+	admin.auth().verifyIdToken(token)
   .then(function(decodedToken) {
     var uid = decodedToken.uid;
    	console.log("Logged in as: "+uid);
