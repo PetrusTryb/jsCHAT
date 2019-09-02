@@ -160,11 +160,18 @@ req.setRequestHeader("channel", channelId);
 req.setRequestHeader("token", token);
 req.onreadystatechange = function (aEvt) {
   if (req.readyState == 4) {
-     if(req.status == 200)
+     if(req.status == 200){
       console.log(req.responseText);
-     else
+      M.toast({html:string_deleteChannel_success});
+      openChannelSelector();
+    }
+     else{
       console.error(req.responseText);
+      M.toast(req.responseText);
+     }
+      
      console.groupEnd(string_group_deleteChannel);
+     openChannelSelector();
   }
 };
 req.send(null);

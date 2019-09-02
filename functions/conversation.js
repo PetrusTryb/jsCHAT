@@ -24,7 +24,7 @@ if(event.httpMethod=="DELETE"){
    	console.log("Logged in as: "+uid);
    	var database = admin.database();
    	var permission = database.ref("channels/"+channelId+"/permissions/"+uid);
-   	permission.on("value",function(snapshot){
+   	permission.once("value",function(snapshot){
    		console.log(snapshot.val());
    		if(snapshot.val()=="ADMIN"){
    			var toDelete = database.ref("channels/"+channelId);
