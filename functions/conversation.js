@@ -22,7 +22,7 @@ if(event.httpMethod=="DELETE"){
   .then(function(decodedToken) {
     var uid = decodedToken.uid;
    	console.log("Logged in as: "+uid);
-   	var database = admin().database();
+   	var database = admin.database();
    	var permission = database.ref("channels/"+channelId+"/permissions/"+uid);
    	permission.on("value",function(snapshot){
    		if(snapshot.val()=="ADMIN"){
