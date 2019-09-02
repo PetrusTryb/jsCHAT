@@ -1048,6 +1048,7 @@ messaging.onTokenRefresh(() => {
 messaging.onMessage((payload) => {
 	console.group(string_group_onMessage);
   console.log(payload);
+  M.toast({html:string_group_onMessage+": "+payload.notification.title});
   console.groupEnd(string_group_onMessage);
 });
 

@@ -16,7 +16,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
   // Customize notification here
   var notificationTitle = 'jsCHAT';
   var notificationOptions = {
-    body: 'Twoje konto wymaga uwagi!',
+    body: 'Message received!',
     icon: 'logo_small.png'
   };
 
