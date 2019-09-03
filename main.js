@@ -121,9 +121,9 @@ remove_script_host : false,
   }
   function createChannel(){
     console.group(string_group_createChannel);
-    firebase.database().ref("chan_count").once("value").then(function(snapshot){
       var name = $("#chan_name").val();
-      var id=snapshot.val();
+      var id=Math.random().toString(36).substring(2) + (new Date()).getTime().toString(36);
+      console.log(id);
     if(name.length==0){
   name=string_default_name+id;
   }
@@ -134,7 +134,7 @@ remove_script_host : false,
   		perms[items[item].id]="MEMBER";
   	if(items[item].disabled)
   		perms[items[item].id]="ADMIN";
-  })  
+  });
   var chanJson = {
     name:name,
     permissions:perms,
@@ -142,13 +142,10 @@ remove_script_host : false,
   };
     console.log(chanJson);
     firebase.database().ref("channels/"+id).set(chanJson).then(function(){
-      firebase.database().ref("chan_count").set(id+1).then(function(){
         M.toast({html:string_createChannel_success});
         openChannelSelector();
         console.log(string_createChannel_success);
         console.groupEnd(string_group_createChannel);
-      })
-    })
     })
   }
   function deleteChannel(){
@@ -163,6 +160,7 @@ req.onreadystatechange = function (aEvt) {
      if(req.status == 200){
       console.log(req.responseText);
       M.toast({html:string_deleteChannel_success});
+      openChannelSelector();
     }
      else{
       console.error(req.responseText);
@@ -171,7 +169,8 @@ req.onreadystatechange = function (aEvt) {
      console.groupEnd(string_group_deleteChannel);
   }
 };
-openChannelSelector();
+messagesRef.off();
+metaRef.off();
 req.send(null);
     })
     
