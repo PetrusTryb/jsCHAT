@@ -416,10 +416,7 @@ req.send(null);
       console.log(string_actionSend_show);
       location.hash="send";
       scrollToBottom();
-      $("#openSend").removeAttr("href");
-      $("#openSend").click(function(){
-        history.back();
-      })
+      $("#openSend").hide();
     }
     else{
       sendDiv.hide();
@@ -427,8 +424,6 @@ req.send(null);
       console.log(string_actionSend_hide);
       location.hash="messages";
       scrollToBottom();
-      $("#openSend").attr("href","#send");
-      $("#openSend").off("click");
     }
     console.groupEnd(string_group_actionSend);
   }
