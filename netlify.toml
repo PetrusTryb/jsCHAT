@@ -1,11 +1,4 @@
 [build]
-  command = "npm build"
-[[headers]]
-  for = "*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    Content-Security-Policy = "default-src 'none'; script-src 'none'; script-src-elem https:; worker-src 'self'; object-src 'none'; connect-src *; style-src 'unsafe-inline'; style-src-elem https:; font-src https:; manifest-src https://jschat.netlify.com/manifest.json; img-src https:; frame-ancestors 'none'; base-uri 'none';form-action 'self'"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
-    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-    Access-Control-Allow-Origin = "https://jschat.netlify.com/"
+  Command = "npm run build"
+  Functions = "lambda"
+  Publish = "build"
