@@ -5,7 +5,7 @@ import '@vaadin/vaadin';
 class Register extends React.Component{
 	componentDidMount() {
 		this.refs.registerButton.addEventListener('click', e => {
-			fetch("/.netlify/functions/user.create.js",{
+			fetch("/.netlify/functions/user-create.js",{
 				method: 'POST',
 				body:JSON.stringify({
 					username:this.refs.username.value,

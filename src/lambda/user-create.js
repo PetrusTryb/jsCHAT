@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 // Load the server
 import db from './server'
-import User from './user.model.js'
+import User from './user-model.js'
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false
   
