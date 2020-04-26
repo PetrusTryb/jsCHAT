@@ -4,7 +4,8 @@ const dotenv = require('dotenv').config()
 const dbUrl = process.env.DB_URL,
       dbOptions = {
         useNewUrlParser: true,
-        useFindAndModify: false
+        useFindAndModify: false,
+        useUnifiedTopology: true
       }
 // Set DB from mongoose connection
 mongoose.connect(dbUrl, dbOptions)

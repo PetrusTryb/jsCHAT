@@ -1,22 +1,178 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import '@vaadin/vaadin';
-class Login extends React.Component{
-	render(){
-		return(
-			<div>
-			<main>
-  <vaadin-login-form></vaadin-login-form>
-</main>
-<vaadin-dialog id="feedbackDialog">
-  <template>Login is being processed...</template>
-</vaadin-dialog>
-<vaadin-dialog id="supportDialog">
-  <template>Please contact support.</template>
-</vaadin-dialog>
-</div>
-		)
-	}
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Toastify from 'toastify-js'
+import "toastify-js/src/toastify.css"
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="/">
+        jsCHAT
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
 }
-export default Login;
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: '100vh',
+  },
+  image: {
+    backgroundImage: 'url(https://source.unsplash.com/random?query=js)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+export default function SignInSide() {
+  const classes = useStyles();
+  if(sessionStorage.getItem("sid"))
+    var sid=sessionStorage.getItem("sid")
+  else
+    var sid=localStorage.getItem("sid")
+  fetch("/.netlify/functions/user",{method:"POST",body:JSON.stringify({"sid":sid})}).then(function(response){
+    if(response.status===200)
+      response.json().then(function(resp) {
+        console.log(resp);
+        document.location.href="/chat";
+      })
+    })
+  function login(e){
+    e.preventDefault();
+        console.log("Logging in...");
+        let userObj={
+            "email":document.getElementById("email").value,
+            "pass":document.getElementById("password").value
+        };
+        fetch("/.netlify/functions/login",{method:"POST",body:JSON.stringify(userObj)}).then(function(response){
+            if(response.status===200){
+                response.text().then(function(r){
+                  if(document.getElementById("localLogin").checked===true){
+                    localStorage.setItem("sid",r)
+                  }
+                  else{
+                    sessionStorage.setItem("sid",r)
+                  }
+                  document.location.href="chat";
+                })
+                }
+                else{
+                    response.text().then(function(t){
+                        console.error("Login failed: "+t);
+                        Toastify({
+                            text: "Authentication failed - error: "+t,
+                            duration: 3000, 
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: 'right', // `left`, `center` or `right`
+                            backgroundColor: "linear-gradient(to right, #ffff00, #3426ff)",
+                            stopOnFocus: true, // Prevents dismissing of toast on hover
+                            onClick: function(){} // Callback after click
+                          }).showToast();
+                    })
+                }
+            });
+  }
+  return (
+    <Grid container component="main" className={classes.root}>
+      <CssBaseline />
+      <Grid item xs={false} sm={4} md={7} className={classes.image}></Grid>
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <form className={classes.form} onSubmit={login}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" id="localLogin"/>}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link href="https://github.com/PetrusTryb/jsCHAT/issues" target="_blank" variant="body2">
+                  Have any problem? Report a bug
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="/register" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+            <Box mt={5}>
+              <Copyright />
+            </Box>
+          </form>
+        </div>
+      </Grid>
+    </Grid>
+  );
+}

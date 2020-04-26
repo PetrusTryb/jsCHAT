@@ -1,14 +1,5 @@
 .App {
-  padding: 4px;
-}
-main {
-    display: flex;
-    justify-content: center;
-    background: var(--main-background);
-    padding: var(--main-padding);
-  }
-.App .form * {
-  margin-right: 4px;
+  text-align: center;
 }
 
 .App-logo {

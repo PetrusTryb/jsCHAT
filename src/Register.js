@@ -1,39 +1,161 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import '@vaadin/vaadin';
-class Register extends React.Component{
-	componentDidMount() {
-		this.refs.registerButton.addEventListener('click', e => {
-			fetch("/.netlify/functions/user-create.js",{
-				method: 'POST',
-				body:JSON.stringify({
-					username:this.refs.username.value,
-					email:this.refs.email.value,
-					password:this.refs.password.value
-				})
-			}).then(response => {
-    alert(response.statusText);
-  });
-		});
-	}
-	render(){
-		return(
-			<main>
-			<vaadin-form-layout>
-			<h1>Register</h1><br/>
-  <vaadin-text-field label="Pick an username" ref="username"></vaadin-text-field>
-  <vaadin-email-field label="Email" ref="email"></vaadin-email-field>
-  <vaadin-password-field label="Password" ref="password"></vaadin-password-field>
-  <vaadin-password-field label="Repeat password" ref="password2"></vaadin-password-field>
-  <vaadin-button colspan="2" onclick={this.createUser} ref="registerButton">
-  <iron-icon icon="vaadin:arrow-right" slot="suffix"></iron-icon>
-  Register
-</vaadin-button>
-</vaadin-form-layout>
-
-</main>
-		)
-	}
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
+import Toastify from 'toastify-js'
+import "toastify-js/src/toastify.css"
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        jsCHAT
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
 }
-export default Register;
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(3),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+export default function SignUp() {
+    function createAccount(e){
+        e.preventDefault();
+        console.log("Registering...");
+        let userObj={
+            "nick":document.getElementById("nickName").value,
+            "email":document.getElementById("email").value,
+            "pass":document.getElementById("password").value
+        };
+        fetch("/.netlify/functions/register",{method:"POST",body:JSON.stringify(userObj)}).then(function(response){
+            if(response.status===200){
+                    document.location.href="/";
+                }
+                else{
+                    response.text().then(function(t){
+                        console.error("Register failed, code: "+t);
+                        if(t==="11000")
+                          t="This e-email address is already in use.";
+                        Toastify({
+                            text: "Account creation failed - error: "+t,
+                            duration: 3000, 
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: 'right', // `left`, `center` or `right`
+                            backgroundColor: "linear-gradient(to right, #ffb09b, #ffc93d)",
+                            stopOnFocus: true, // Prevents dismissing of toast on hover
+                            onClick: function(){} // Callback after click
+                          }).showToast();
+                    })
+                }
+            });
+    }
+  const classes = useStyles();
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <form className={classes.form} onSubmit={createAccount}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="login"
+                name="nick"
+                variant="outlined"
+                required
+                fullWidth
+                id="nickName"
+                label="Nick"
+                autoFocus
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                type="email"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <FormControlLabel
+                control={<Checkbox name="check" value="acceptRules" color="primary" required/>}
+                label="I promise I will be kind for all jsCHAT users."
+              />
+            </Grid>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+          <Grid container justify="flex-end">
+            <Grid item>
+              <Link href="/" variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
+        </form>
+      </div>
+      <Box mt={5}>
+        <Copyright />
+      </Box>
+    </Container>
+  );
+}
