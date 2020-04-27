@@ -1,3 +1,3 @@
 [build]
   Command = "npm run build"
-  Functions = "src/lambda"
+  Functions = "src/lambda-build"
