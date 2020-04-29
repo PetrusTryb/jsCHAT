@@ -23,6 +23,7 @@ db.collection("users").insertOne(userData, function(err, res) {
     statusCode: 200,
     body: String(userData._id)
     });
+    db.close();
     }
   });
 }

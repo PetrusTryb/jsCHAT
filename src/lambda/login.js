@@ -23,12 +23,12 @@ exports.handler = function(event, context, callback) {
                         });
                 }
                 else{
-                  console.log(res)
                 callback(null, {
                 statusCode: 200,
                 body: sid
                 });
                 }
+                db.close();
               });
             }
           else{
@@ -37,6 +37,7 @@ exports.handler = function(event, context, callback) {
               statusCode: 401,
               body: "Wrong email or password"
             });
+            db.close();
           }
         });
 }

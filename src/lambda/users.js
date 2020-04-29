@@ -31,5 +31,6 @@ exports.handler = function(event, context, callback) {
                 body:JSON.stringify(docs)
             })
         }
+        db.close();
     });
 }

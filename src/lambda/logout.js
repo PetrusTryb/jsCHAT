@@ -14,5 +14,6 @@ exports.handler = function(event, context, callback) {
                 body:"Goodbye!"
             });
         }
+        db.close();
     })
 }
