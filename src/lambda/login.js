@@ -8,6 +8,7 @@ exports.handler = function(event, context, callback) {
     var md5 = require('md5');
         db.collection("users").findOne({"email":body["email"],"pass":md5(process.env.DB_salt+body["pass"])}, function(err, result) {
           if(result){
+            console.log("Creating session for "+body["email"]);
             let session={
                 "sessionId":sid,
                 "uid":result._id,
@@ -22,6 +23,7 @@ exports.handler = function(event, context, callback) {
                         });
                 }
                 else{
+                  console.log(res)
                 callback(null, {
                 statusCode: 200,
                 body: sid
@@ -30,6 +32,7 @@ exports.handler = function(event, context, callback) {
               });
             }
           else{
+            console.error("Invalid password provided for "+body["email"]);
             callback(null, {
               statusCode: 401,
               body: "Wrong email or password"
