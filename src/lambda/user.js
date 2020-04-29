@@ -18,6 +18,7 @@ exports.handler = function(event, context, callback) {
                         body:"Invalid session"
                     });
                 }
+                db.close();
             })
         }
         else{
@@ -25,6 +26,7 @@ exports.handler = function(event, context, callback) {
                 statusCode: 403,
                 body: "Not logged in"
               });
+            db.close();
         }
     })
 }
