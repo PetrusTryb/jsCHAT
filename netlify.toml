@@ -2,3 +2,7 @@
   Command = "npm run build"
   Functions = "lambda"
   Publish = "build"
+[[redirects]]
+  from="/*"
+  to="/index.html"
+  status=200
