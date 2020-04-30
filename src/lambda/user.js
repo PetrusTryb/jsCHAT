@@ -1,8 +1,12 @@
-import db from './server'
+import {connectToDB} from './server'
 exports.handler = function(event, context, callback) {
     let body=JSON.parse(event.body);
-    console.log("Validating session: "+body["sid"])
+    console.log("Validating session: "+body["sid"]);
+    let db=connectToDB();
     db.collection("sessions").findOne({"sessionId":body["sid"]}, function(err, result) {
+        if(err){
+            console.error("Database error!");
+        }
         if(result){
             console.log("Session found: "+body["sid"]);
             let userId=result.uid;
