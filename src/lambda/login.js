@@ -1,4 +1,4 @@
-import db from './server'
+import {connectToDB} from './server'
 exports.handler = function(event, context, callback) {
     let body=JSON.parse(event.body);
     let sid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -6,13 +6,17 @@ exports.handler = function(event, context, callback) {
       return v.toString(16);
     });
     var md5 = require('md5');
+    let db=connectToDB();
         db.collection("users").findOne({"email":body["email"],"pass":md5(process.env.DB_salt+body["pass"])}, function(err, result) {
-          if(result){
-            console.log("Creating session for "+body["email"]);
-            let session={
-                "sessionId":sid,
-                "uid":result._id,
-                "loginTime":String(Date.now())
+            if(err){
+                console.log("Database error!");
+            }
+            if(result){
+                console.log("Creating session for "+body["email"]);
+                let session={
+                    "sessionId":sid,
+                    "uid":result._id,
+                    "loginTime":String(Date.now())
             }
             db.collection("sessions").insertOne(session, function(err, res) {
                 if (err){

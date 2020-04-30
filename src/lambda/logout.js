@@ -1,6 +1,7 @@
-import db from './server'
+import {connectToDB} from './server'
 exports.handler = function(event, context, callback) {
     let body=JSON.parse(event.body);
+    let db=connectToDB();
     db.collection("sessions").deleteOne({sessionId:body["sid"]},function(err,result){
         if(err){
             callback(null,{

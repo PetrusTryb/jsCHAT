@@ -1,4 +1,4 @@
-import db from './server'
+import {connectToDB} from './server'
 exports.handler = function(event, context, callback) {
     
     let body=JSON.parse(event.body);
@@ -9,6 +9,7 @@ exports.handler = function(event, context, callback) {
         "pass":md5(process.env.DB_salt+body["pass"]),
         "joinedAt":String(Date.now())
 };
+    let db=connectToDB();
 db.collection("users").insertOne(userData, function(err, res) {
     if (err){
         console.error(err)
