@@ -37,3 +37,4 @@ exports.handler = function(event, context, callback) {
         db.close();
     });
 }
+}
