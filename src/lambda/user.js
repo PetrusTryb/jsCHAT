@@ -6,7 +6,7 @@ exports.handler = function(event, context, callback) {
         if(result){
             let userId=result.uid;
             db.collection("users").findOne({"_id":userId},function(err,userData) {
-                if(result){
+                if(userData){
                     callback(null, {
                         statusCode: 200,
                         body: JSON.stringify(userData)
